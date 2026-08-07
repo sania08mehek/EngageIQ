@@ -1,3 +1,4 @@
+
 # EngageIQ
 
 **Ethical Employee Productivity & Engagement Intelligence**
@@ -7,43 +8,7 @@ EngageIQ helps organizations measure team productivity and engagement through **
 ---
 
 ## 🏗️ Architecture
-Think
-Here is the complete README.md code ready to paste:
-Markdown
-Copy
-Code
-Preview
-# EngageIQ
 
-**Ethical Employee Productivity & Engagement Intelligence**
-
-EngageIQ helps organizations measure team productivity and engagement through **workplace collaboration patterns** and **actual output metrics** — without invasive surveillance like screenshots, keystrokes, or webcam recordings.
-
----
-
-## 🏗️ Architecture
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Data Ingestion │────▶│   Processing     │────▶│ Time-Series     │
-│  (Python/REST)  │     │  (Pandas, NumPy) │     │  (Prophet/LSTM) │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-│
-┌───────────────────────┼──────────────┐
-▼                       ▼              ▼
-┌──────────┐            ┌──────────┐   ┌──────────┐
-│   EHS    │            │   OPI    │   │  Risk    │
-│ (40%)    │            │ (60%)    │   │ Detection│
-└────┬─────┘            └────┬─────┘   └────┬─────┘
-│                       │              │
-└───────────┬───────────┘              │
-▼                          ▼
-┌──────────┐               ┌──────────┐
-│   PACE   │──────────────▶│ Dashboard│
-│  Score   │               │(Streamlit│
-└──────────┘               │ /React)  │
-└──────────┘
-
-
----
 
 ## 📊 Scoring System
 
