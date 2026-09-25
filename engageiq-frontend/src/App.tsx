@@ -6,6 +6,7 @@ import TeamView from './pages/TeamView';
 import EmployeeView from './pages/EmployeeView';
 import PaceScore from './pages/PaceScore';
 import NotFound from './pages/NotFound';
+import DataIngestion from './pages/DataIngestion';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="dashboard/teams/:teamId" element={<TeamView />} />
         <Route path="dashboard/people/:employeeId" element={<EmployeeView />} />
         <Route path="pace-score" element={<PaceScore />} />
+        <Route path="ingestion" element={<DataIngestion />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

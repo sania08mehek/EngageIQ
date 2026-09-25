@@ -44,6 +44,7 @@ export default function Layout() {
             <NavLink to="/" end>Overview</NavLink>
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/pace-score">PACE score</NavLink>
+            <NavLink to="/ingestion">Data Ingestion</NavLink>
           </nav>
 
           <div className="header-actions">
