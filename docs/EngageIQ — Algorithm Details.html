@@ -1,0 +1,280 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}</style><style>:root{color-scheme:light dark;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}}:root[data-theme="dark"]{color-scheme:dark;--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}:root[data-theme="light"]{color-scheme:light}@media print{:root,:root[data-theme="dark"]{color-scheme:light;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}}body{background:var(--md-bg);color:var(--md-text);max-width:720px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:10px;font:14px/1.55 -apple-system,BlinkMacSystemFont,'SF Pro','Segoe UI',sans-serif;overflow-wrap:break-word}body>:first-child{margin-top:0}h1,h2,h3,h4,h5,h6{margin:6px 0 0;line-height:1.25;font-weight:600;text-wrap:balance}h1{font-size:1.35em}h2{font-size:1.15em;color:var(--md-muted)}h3,h4,h5,h6{font-size:1em}p,ul,ol,blockquote,table,pre,hr{margin:0}strong{font-weight:600}a{color:var(--md-link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{display:flex;flex-direction:column;gap:6px;padding-left:22px}ul{list-style:disc}ol{list-style:decimal}:is(li,td,th)>*+:is(p,ul,ol,blockquote){margin-top:6px}blockquote{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--md-rule);padding-left:10px;color:var(--md-muted)}:not(pre)>code{background:var(--md-fill);padding:1px 3px;border-radius:4px;font:.92em 'SF Mono',ui-monospace,Menlo,Consolas,monospace}a>code{background:none;color:inherit}pre{background:var(--md-fill);padding:10px 12px;border-radius:6px;overflow-x:auto;font:12px/1.5 'SF Mono',ui-monospace,Menlo,Consolas,monospace;margin-block:4px}pre code{background:none;padding:0;font:inherit}table{width:100%;border-collapse:separate;border-spacing:2px;font:inherit}th,td{padding:6px 8px;border-radius:3px;text-align:left;vertical-align:top}th{background:var(--md-fill-strong);font-weight:600}td{background:var(--md-fill)}:is(th,td) :not(pre)>code{background:transparent}hr{border:0;border-top:1px solid var(--md-rule-strong);margin-block:10px}img{max-width:100%;height:auto;border-radius:4px}</style>
+</head><body>
+<h1>EngageIQ (PACE) — Algorithm Details</h1>
+<p>Core algorithms behind the PACE scoring engine: EHS computation, OPI computation, PACE score fusion, trend/anomaly detection, and risk classification.</p>
+<hr>
+<h2>1. End-to-End Pipeline</h2>
+<pre class="mermaid">flowchart TD
+    A[Raw data: Calendar, Slack/Teams, Jira, GitHub] --&gt; B[Ingestion &amp; Normalization]
+    B --&gt; C[Feature Engineering]
+    C --&gt; D1[EHS Algorithm]
+    C --&gt; D2[OPI Algorithm]
+    D1 --&gt; E[PACE Fusion: 0.4·EHS + 0.6·OPI]
+    D2 --&gt; E
+    E --&gt; F[Trend &amp; Anomaly Detection]
+    F --&gt; G[Risk Classification]
+    G --&gt; H[Dashboard / Alerts]
+    H --&gt; I[Human-in-the-Loop Review]
+</pre>
+<hr>
+<h2>2. EHS Algorithm (Engagement / Work-Pattern Health Index)</h2>
+<p><strong>Goal:</strong> score the health of an employee's work pattern from calendar/communication metadata, in the range [0, 1], where higher = healthier.</p>
+<h3>Flowchart</h3>
+<pre class="mermaid">flowchart TD
+    A[Calendar + chat metadata for period] --&gt; B[Compute meeting_load]
+    B --&gt; C[Compute focus_gap]
+    C --&gt; D[Compute response_latency]
+    D --&gt; E[Compute after_hours_ratio]
+    E --&gt; F[Normalize each feature to 0-1 vs baseline]
+    F --&gt; G[Weighted sum of normalized features]
+    G --&gt; H[Clip to 0-1 range]
+    H --&gt; I[Return EHS]
+</pre>
+<h3>Pseudocode</h3>
+<pre><code class="language-text">FUNCTION compute_EHS(employee_id, period):
+    events   = get_calendar_events(employee_id, period)
+    messages = get_comm_metadata(employee_id, period)
+
+    meeting_load   = total_meeting_hours(events) / period.working_hours
+    focus_gap      = 1 - (longest_uninterrupted_block(events) / period.working_hours)
+    response_lat   = avg_response_time(messages)
+    after_hours    = count_events_outside(events, work_start, work_end) / total_events(events)
+
+    // normalize each raw feature against the employee&#39;s rolling baseline
+    n_meeting  = normalize(meeting_load,  baseline.meeting_load,  clip=[0,1])
+    n_focus    = normalize(focus_gap,     baseline.focus_gap,     clip=[0,1])
+    n_response = normalize(response_lat,  baseline.response_lat,  clip=[0,1])
+    n_afterhr  = normalize(after_hours,   baseline.after_hours,   clip=[0,1])
+
+    // lower meeting_load, focus_gap, response_lat, after_hours =&gt; healthier
+    W1, W2, W3, W4 = 0.30, 0.30, 0.20, 0.20   // configurable weights, sum = 1
+
+    EHS = 1 - (W1*n_meeting + W2*n_focus + W3*n_response + W4*n_afterhr)
+    EHS = clip(EHS, 0, 1)
+
+    RETURN EHS, {meeting_load, focus_gap, response_lat, after_hours}  // score + explainability
+END FUNCTION
+</code></pre>
+<p><strong>Complexity:</strong> O(n) over calendar/chat events in the period — one pass to aggregate, constant-time normalization and fusion.</p>
+<hr>
+<h2>3. OPI Algorithm (Output Productivity Index)</h2>
+<p><strong>Goal:</strong> score actual delivery output from Jira/GitHub metadata, range [0, 1], higher = more productive.</p>
+<h3>Flowchart</h3>
+<pre class="mermaid">flowchart TD
+    A[Jira + GitHub metadata for period] --&gt; B[Compute task_completion_rate]
+    B --&gt; C[Compute sprint_velocity]
+    C --&gt; D[Compute deadline_adherence]
+    D --&gt; E[Compute code_activity: commits + PRs]
+    E --&gt; F[Compute rework_ratio]
+    F --&gt; G[Normalize vs role baseline]
+    G --&gt; H[Weighted sum]
+    H --&gt; I[Return OPI]
+</pre>
+<h3>Pseudocode</h3>
+<pre><code class="language-text">FUNCTION compute_OPI(employee_id, period, role):
+    tasks   = get_jira_tasks(employee_id, period)
+    commits = get_git_activity(employee_id, period)
+
+    completion_rate  = count(tasks.status == DONE) / count(tasks)
+    velocity         = sum(tasks.story_points WHERE status == DONE)
+    deadline_adhere  = count(tasks.completed_on_time) / count(tasks.completed)
+    code_activity    = commits.count + prs.count
+    rework_ratio     = count(tasks.reopened OR tasks.revised) / count(tasks)
+
+    // role-aware normalization: engineer vs sales vs design use different baselines
+    baseline = get_role_baseline(role)
+    n_completion = normalize(completion_rate, baseline.completion, clip=[0,1])
+    n_velocity   = normalize(velocity,         baseline.velocity,   clip=[0,1])
+    n_deadline   = normalize(deadline_adhere,  baseline.deadline,   clip=[0,1])
+    n_code       = normalize(code_activity,    baseline.code,       clip=[0,1])
+    n_rework     = normalize(rework_ratio,     baseline.rework,     clip=[0,1])   // higher rework is worse
+
+    W1, W2, W3, W4, W5 = 0.25, 0.25, 0.20, 0.20, 0.10   // sum = 1
+
+    OPI = W1*n_completion + W2*n_velocity + W3*n_deadline + W4*n_code - W5*n_rework
+    OPI = clip(OPI, 0, 1)
+
+    RETURN OPI, {completion_rate, velocity, deadline_adhere, code_activity, rework_ratio}
+END FUNCTION
+</code></pre>
+<p><strong>Complexity:</strong> O(n) over tasks + commits in the period.</p>
+<hr>
+<h2>4. PACE Fusion Algorithm</h2>
+<h3>Flowchart</h3>
+<pre class="mermaid">flowchart LR
+    A[EHS score] --&gt; C[PACE = 0.4·EHS + 0.6·OPI]
+    B[OPI score] --&gt; C
+    C --&gt; D[Store PACE with timestamp]
+    D --&gt; E[Append to employee history]
+</pre>
+<h3>Pseudocode</h3>
+<pre><code class="language-text">FUNCTION compute_PACE(EHS, OPI):
+    PACE = (0.4 * EHS) + (0.6 * OPI)
+    RETURN round(PACE, 2)
+END FUNCTION
+
+// Example
+// EHS = 0.50, OPI = 0.80
+// PACE = 0.4*0.50 + 0.6*0.80 = 0.20 + 0.48 = 0.68
+</code></pre>
+<p>Output is weighted higher than Signal (0.6 vs 0.4) so quieter collaborators are not penalized for communication style alone.</p>
+<hr>
+<h2>5. Trend &amp; Anomaly Detection Algorithm</h2>
+<p><strong>Goal:</strong> flag <em>changes over time</em>, not single-point scores, using a rolling baseline + deviation check (MVP version — no ML dependency; LSTM can replace the deviation step once enough history exists).</p>
+<h3>Flowchart</h3>
+<pre class="mermaid">flowchart TD
+    A[PACE/EHS/OPI history, last N periods] --&gt; B[Compute rolling mean and std-dev baseline]
+    B --&gt; C{Current score deviates &gt; k·σ from baseline?}
+    C -- Yes --&gt; D{Deviation persists over &gt;=2 periods?}
+    C -- No --&gt; H[No anomaly]
+    D -- Yes --&gt; E[Classify as Persistent Deterioration]
+    D -- No --&gt; F[Classify as Sudden Change]
+    E --&gt; G[Emit Risk Signal]
+    F --&gt; G
+</pre>
+<h3>Pseudocode</h3>
+<pre><code class="language-text">FUNCTION detect_trend_anomaly(employee_id, history, k=1.5, window=6):
+    scores  = history.last(window)          // e.g. last 6 periods of PACE
+    mean    = average(scores[0 : window-1])  // baseline excludes current period
+    std_dev = std(scores[0 : window-1])
+    current = scores[window-1]
+
+    deviation = (mean - current) / std_dev   // positive =&gt; current is worse than baseline
+
+    IF deviation &gt; k:
+        // check persistence across last 2 periods
+        prev_deviation = (mean - scores[window-2]) / std_dev
+        IF prev_deviation &gt; k:
+            RETURN {anomaly: TRUE, type: &#34;persistent_deterioration&#34;, severity: deviation}
+        ELSE:
+            RETURN {anomaly: TRUE, type: &#34;sudden_change&#34;, severity: deviation}
+    ELSE:
+        RETURN {anomaly: FALSE}
+END FUNCTION
+</code></pre>
+<p><strong>Complexity:</strong> O(window) per employee per run — cheap enough to run on a scheduled batch job across all employees.</p>
+<hr>
+<h2>6. Risk Classification Algorithm</h2>
+<h3>Flowchart</h3>
+<pre class="mermaid">flowchart TD
+    A[PACE score + anomaly result] --&gt; B{PACE &gt;= 0.7?}
+    B -- Yes --&gt; C[Healthy]
+    B -- No --&gt; D{PACE &gt;= 0.4?}
+    D -- Yes --&gt; E[Moderate]
+    D -- No --&gt; F[At-Risk]
+    C --&gt; G{Anomaly flagged?}
+    E --&gt; G
+    F --&gt; G
+    G -- Yes --&gt; H[Escalate one band + attach explanation]
+    G -- No --&gt; I[Keep band, attach explanation]
+    H --&gt; J[Send to Dashboard / Alerts]
+    I --&gt; J
+</pre>
+<h3>Pseudocode</h3>
+<pre><code class="language-text">FUNCTION classify_risk(PACE, anomaly_result, features):
+    IF PACE &gt;= 0.7:
+        band = &#34;Healthy&#34;
+    ELSE IF PACE &gt;= 0.4:
+        band = &#34;Moderate&#34;
+    ELSE:
+        band = &#34;At-Risk&#34;
+
+    // escalate one band if a persistent negative trend is detected,
+    // even if the raw score alone still looks acceptable
+    IF anomaly_result.anomaly == TRUE AND anomaly_result.type == &#34;persistent_deterioration&#34;:
+        band = escalate(band)   // Healthy -&gt; Moderate -&gt; At-Risk
+
+    explanation = build_explanation(features, anomaly_result)
+    // e.g. &#34;OPI stable, EHS down 22% over 3 weeks (meeting load +40%)&#34;
+
+    RETURN {risk_band: band, score: PACE, explanation: explanation}
+END FUNCTION
+</code></pre>
+<p><strong>Complexity:</strong> O(1) — the classifier only reads already-computed scores; all heavy lifting happens upstream in EHS/OPI/trend steps.</p>
+<hr>
+<h2>Design Notes (Optimization / Responsible-AI Constraints)</h2>
+<ul>
+<li><strong>Linear time overall:</strong> each stage (ingestion, EHS, OPI, fusion, trend, classification) processes each employee's records in a single pass — no nested loops over the full dataset, so the pipeline scales linearly with (employees × events).</li>
+<li><strong>Batchable:</strong> trend/risk classification can run as a nightly/weekly batch job rather than real time, keeping compute cost low.</li>
+<li><strong>No automatic decisions:</strong> the classifier only emits a risk band + explanation; final judgment is always routed to human review (Section 16 of the architecture doc), per the project's human-in-the-loop constraint.</li>
+<li><strong>Explainability by construction:</strong> every algorithm returns the raw contributing features alongside the score, so risk bands are never a black-box number.</li>
+</ul>
+
+
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="/_runtime/mermaid-11.16.1.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+</body></html>
