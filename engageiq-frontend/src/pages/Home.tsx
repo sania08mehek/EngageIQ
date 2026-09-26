@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import DualLens from '../components/DualLens';
+import UploadModal from '../components/UploadModal';
 
 const STEPS = [
   { name: 'Collect', text: 'Pull calendar, task and code metadata through official APIs.' },
@@ -44,8 +46,11 @@ function Cross() {
 }
 
 export default function Home() {
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
   return (
     <>
+      {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} onSuccess={() => {}} />}
       <section className="wrap hero">
         <div className="hero-copy">
           <h1>See how work is going, not who is online.</h1>
@@ -53,7 +58,7 @@ export default function Home() {
             EngageIQ turns calendar and delivery metadata into one score and a trend. When a pattern changes, a person takes a look. Nothing is decided automatically.
           </p>
           <div className="actions">
-            <Link className="btn" to="/dashboard">Open the dashboard</Link>
+            <button className="btn" onClick={() => setIsUploadOpen(true)}>Get Started (Upload Data)</button>
             <Link className="btn btn-ghost" to="/pace-score">Try the PACE score</Link>
           </div>
         </div>
@@ -158,7 +163,7 @@ export default function Home() {
       <section className="wrap section closing">
         <h2>Look at a sample team</h2>
         <p>The dashboard shows an organization, its teams and each person, with the review queue a manager works through.</p>
-        <Link className="btn" to="/dashboard">Open the dashboard</Link>
+        <button className="btn" onClick={() => setIsUploadOpen(true)}>Upload Data</button>
       </section>
     </>
   );
