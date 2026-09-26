@@ -38,7 +38,7 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
         raise HTTPException(status_code=400, detail=f"Error parsing CSV: {str(e)}")
         
     required_cols = [
-        "employee_id", "employee_name", 
+        "employee_id", "employee_name", "team_id",
         "meeting_load", "focus_gap", "response_latency", "after_hours_ratio",
         "completion_rate", "velocity", "deadline_adherence", "code_activity", "rework_ratio"
     ]
@@ -53,7 +53,7 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
         # Get or create employee
         emp = db.query(models.Employee).filter(models.Employee.id == row['employee_id']).first()
         if not emp:
-            emp = models.Employee(id=row['employee_id'], name=row['employee_name'], role="Engineer")
+            emp = models.Employee(id=row['employee_id'], name=row['employee_name'], role="Engineer", team=row.get('team_id', 'platform'))
             db.add(emp)
             db.commit()
             db.refresh(emp)
@@ -93,6 +93,7 @@ def get_scores(db: Session = Depends(get_db)):
             "id": s.id,
             "employee_id": s.employee_id,
             "employee_name": s.employee.name if s.employee else "Unknown",
+            "team_id": s.employee.team if s.employee else "platform",
             "ehs": s.ehs_score,
             "opi": s.opi_score,
             "pace": s.pace_score,

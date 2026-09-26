@@ -6,7 +6,7 @@ import datetime
 class Employee(Base):
     __tablename__ = "employees"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
     role = Column(String)
     team = Column(String)
@@ -16,7 +16,7 @@ class PaceScore(Base):
     __tablename__ = "pace_scores"
 
     id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(Integer, ForeignKey("employees.id"))
+    employee_id = Column(String, ForeignKey("employees.id"))
     timestamp = Column(DateTime, default=datetime.datetime.utcnow)
     
     ehs_score = Column(Float)
