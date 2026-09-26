@@ -36,10 +36,13 @@ import type {
 /* ---------- people ---------- */
 
 const TEAMS: Team[] = [
-  { id: 'platform', name: 'Platform' },
+  { id: 'platform', name: 'Platform Engineering' },
   { id: 'design', name: 'Product Design' },
-  { id: 'sales', name: 'Sales' },
+  { id: 'sales', name: 'Enterprise Sales' },
   { id: 'data-ml', name: 'Data and ML' },
+  { id: 'marketing', name: 'Growth Marketing' },
+  { id: 'support', name: 'Customer Support' },
+  { id: 'core', name: 'Core Infrastructure' }
 ];
 
 const ROLE_NAMES: Record<RoleId, string> = {
@@ -80,7 +83,7 @@ const SPECS: Spec[] = [
   { name: 'Farhan Ali', role: 'salesperson', team: 'sales', scenario: 'burnout' },
   { name: 'Tara Joshi', role: 'salesperson', team: 'sales', scenario: 'steadyMid' },
   { name: 'Vikram Shah', role: 'salesperson', team: 'sales', scenario: 'steadyHigh' },
-  { name: 'Sana Pillai', role: 'manager', team: 'sales', scenario: 'steadyMid' },
+  { name: 'Sania I', role: 'manager', team: 'sales', scenario: 'steadyMid' },
 
   { name: 'Arjun Reddy', role: 'engineer', team: 'data-ml', scenario: 'steadyHigh' },
   { name: 'Divya Krishnan', role: 'engineer', team: 'data-ml', scenario: 'quiet' },
@@ -298,7 +301,36 @@ function build(spec: Spec): Base {
   };
 }
 
-const BASES: Base[] = SPECS.map(build);
+let BASES: Base[] = [];
+
+export function applyRealData(scores: any[]) {
+  if (!scores || scores.length === 0) return;
+  // Replace the default bases with real employees, mapping backend data to the Base structure
+  BASES = scores.map(s => {
+    const id = slug(s.employee_name);
+    const role: RoleId = 'engineer'; // hardcoded for now or derived
+    const team: Team = TEAMS.find(t => t.id === s.team_id) || TEAMS[0];
+    
+    const fakeHistory = WEEKS.map((week) => makeWeek(week, s.ehs, s.opi));
+    // The latest score has the real values
+    const latest = { week: WEEKS[WEEKS.length - 1], ehs: s.ehs, opi: s.opi, pace: s.pace };
+    fakeHistory[fakeHistory.length - 1] = latest;
+    
+    const features = buildFeatures(role, fakeHistory);
+    const risk = assess(fakeHistory, features);
+    risk.category = s.risk.toLowerCase() as RiskCategory || risk.category;
+    risk.summary = s.explanation || risk.summary;
+    
+    return {
+      employee: { id, name: s.employee_name, roleId: role, roleName: 'Engineer', teamId: team.id, teamName: team.name },
+      history: fakeHistory,
+      features,
+      risk,
+      flagged: risk.patterns.length > 0 || risk.category === 'at-risk',
+      baselinePace: s.pace, // no real history yet
+    };
+  });
+}
 
 /* ---------- human reviews (kept in the browser while the backend does not exist) ---------- */
 
@@ -364,6 +396,10 @@ function rowOf(b: Base): EmployeeRow {
 }
 
 function summarize(members: Base[]): GroupSummary {
+  if (members.length === 0) {
+    const emptyHistory = WEEKS.map(week => makeWeek(week, 0, 0));
+    return { headcount: 0, history: emptyHistory, latest: last(emptyHistory), delta: 0, mix: { healthy: 0, moderate: 0, 'at-risk': 0 } };
+  }
   const history = WEEKS.map((week, i) =>
     makeWeek(week, mean(members.map((m) => m.history[i].ehs)), mean(members.map((m) => m.history[i].opi))),
   );

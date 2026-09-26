@@ -33,6 +33,28 @@ export function SampleNotice() {
   );
 }
 
+export function ComingSoon({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <div style={{ filter: 'blur(4px)', opacity: 0.6, pointerEvents: 'none' }}>
+        {children}
+      </div>
+      <div style={{ 
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+        display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10
+      }}>
+        <div style={{ 
+          background: 'var(--wash)', padding: '0.75rem 1.5rem', 
+          borderRadius: 'var(--r-md)', fontWeight: 600, color: 'var(--ink)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)', border: '1px solid var(--rule)'
+        }}>
+          Coming Soon
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Breadcrumb({ items }: { items: { label: string; to?: string }[] }) {
   return (
     <nav className="crumbs" aria-label="Breadcrumb">

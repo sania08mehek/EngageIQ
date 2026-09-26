@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAsync } from '../hooks/useAsync';
-import { Breadcrumb, ErrorState, Loading, SampleNotice } from '../components/States';
+import { Breadcrumb, ErrorState, Loading, SampleNotice, ComingSoon } from '../components/States';
 import Stat from '../components/Stat';
 import RiskBar from '../components/RiskBar';
 import RiskBadge from '../components/RiskBadge';
@@ -134,7 +134,9 @@ export default function TeamView() {
           <span className="muted fineprint">Weekly aggregate across all members</span>
         </div>
         <div className="panel">
-          <TrendChart data={history} />
+          <ComingSoon>
+            <TrendChart data={history} />
+          </ComingSoon>
         </div>
       </section>
 
@@ -256,7 +258,9 @@ export default function TeamView() {
                     <td className="num">{f2(m.latest.ehs)}</td>
                     <td className="num">{f2(m.latest.opi)}</td>
                     <td>
-                      <Sparkline values={m.sparkline} category={m.category} />
+                      <ComingSoon>
+                        <Sparkline values={m.sparkline} category={m.category} />
+                      </ComingSoon>
                     </td>
                     <td>
                       <RiskBadge category={m.category} />
@@ -279,7 +283,9 @@ export default function TeamView() {
           <div className="block-head">
             <h2 id="team-queue-h">Team Review Queue ({data.queue.length})</h2>
           </div>
-          <ReviewQueue items={data.queue} />
+          <ComingSoon>
+            <ReviewQueue items={data.queue} />
+          </ComingSoon>
         </section>
       )}
     </div>

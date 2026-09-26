@@ -8,9 +8,9 @@
 import * as mock from './mock';
 import type { EmployeeDetail, OrgSummary, ReviewInput, ReviewRecord, TeamDetail } from './types';
 
-const BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || '';
+const BASE = 'http://localhost:8000';
 
-export const USING_SAMPLE_DATA = !BASE;
+export const USING_SAMPLE_DATA = false;
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
@@ -25,8 +25,19 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+async function fetchRealAndApply() {
+  try {
+    const scores = await http<any[]>('/api/scores');
+    if (scores && scores.length > 0) {
+      mock.applyRealData(scores);
+    }
+  } catch (e) {
+    console.warn("Failed to fetch real data from backend, falling back to pure mock.", e);
+  }
+}
+
 async function call<T>(path: string, sample: () => T, init?: RequestInit): Promise<T> {
-  if (BASE) return http<T>(path, init);
+  await fetchRealAndApply();
   await pause(120); // lets loading states show while there is no network
   return sample();
 }
