@@ -37,7 +37,7 @@ export default function Layout() {
           <Link to="/" className="brand" aria-label="EngageIQ home">
             <BrandMark />
             <span>EngageIQ</span>
-            <span className="brand-tag">PACE</span>
+            {/* <span className="brand-tag">PACE</span> */}
           </Link>
 
           <nav aria-label="Main" className={`nav ${mobileMenuOpen ? 'nav-open' : ''}`}>

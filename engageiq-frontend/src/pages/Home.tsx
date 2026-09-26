@@ -53,9 +53,9 @@ export default function Home() {
       {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} onSuccess={() => {}} />}
       <section className="wrap hero">
         <div className="hero-copy">
-          <h1>See how work is going, not who is online.</h1>
+          <h1>Engagement analytics, built on outcomes — not observation</h1>
           <p className="lead">
-            EngageIQ turns calendar and delivery metadata into one score and a trend. When a pattern changes, a person takes a look. Nothing is decided automatically.
+            We synthesize calendar events and project delivery metrics into a unified health score. By flagging subtle shifts in work patterns, EngageIQ empowers leaders to have meaningful conversations before burnout happens.
           </p>
           <div className="actions">
             <button className="btn" onClick={() => setIsUploadOpen(true)}>Get Started (Upload Data)</button>
