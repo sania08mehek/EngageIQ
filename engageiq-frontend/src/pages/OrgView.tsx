@@ -2,12 +2,14 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAsync } from '../hooks/useAsync';
-import { ErrorState, Loading, SampleNotice } from '../components/States';
+import { ErrorState, Loading, SampleNotice, ComingSoon } from '../components/States';
 import Stat from '../components/Stat';
 import RiskBar from '../components/RiskBar';
 import Sparkline from '../components/Sparkline';
 import TrendChart from '../components/TrendChart';
 import ReviewQueue from '../components/ReviewQueue';
+import UploadModal from '../components/UploadModal';
+import RiskBadge from '../components/RiskBadge';
 import { classify } from '../lib/pace';
 import { f2, longDate, signed } from '../lib/format';
 import type { TeamRow } from '../api/types';
@@ -21,11 +23,13 @@ export default function OrgView() {
   const [sortField, setSortField] = useState<SortField>('pace');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [queueFilter, setQueueFilter] = useState<QueueFilter>('all');
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploadResults, setUploadResults] = useState<any[] | null>(null);
 
   const filteredTeams = useMemo(() => {
     if (!data) return [];
     let list = data.teams.filter((t) =>
-      t.team.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      t.team.name.toLowerCase().includes(searchTerm.toLowerCase()) && t.headcount > 0
     );
 
     list.sort((a: TeamRow, b: TeamRow) => {
@@ -74,6 +78,17 @@ export default function OrgView() {
   if (error) return <ErrorState message={error} onRetry={reload} />;
   if (!data) return <Loading />;
 
+  if (data.headcount === 0) {
+    return (
+      <div className="wrap page" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+        <h2>No Data Available</h2>
+        <p className="muted" style={{ marginBottom: '2rem' }}>Upload your CSV metadata to generate PACE scores and view the dashboard.</p>
+        <button className="btn" onClick={() => setIsUploadOpen(true)}>Upload Data</button>
+        {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} onSuccess={(res) => { setUploadResults(res); reload(); }} />}
+      </div>
+    );
+  }
+
   const { history, latest } = data;
   const before = history[history.length - 5];
   const waiting = data.queue.filter((q) => q.status === 'needs-review').length;
@@ -94,12 +109,16 @@ export default function OrgView() {
 
   return (
     <div className="wrap page">
-      <header className="page-head">
-        <h1>Organization Health & Performance</h1>
-        <p className="muted">
-          {data.headcount} people across {data.teams.length} teams, 12 weeks up to the week of {longDate(latest.week)}.
-        </p>
-        <SampleNotice />
+      {isUploadOpen && <UploadModal onClose={() => setIsUploadOpen(false)} onSuccess={(res) => { setUploadResults(res); reload(); }} />}
+      <header className="page-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1>Organization Health & Performance</h1>
+          <p className="muted">
+            {data.headcount} people across {filteredTeams.length} teams.
+          </p>
+          <SampleNotice />
+        </div>
+        <button className="btn" onClick={() => setIsUploadOpen(true)}>Upload CSV Data</button>
       </header>
 
       <div className="stats">
@@ -128,9 +147,42 @@ export default function OrgView() {
           <span className="muted fineprint">Composite PACE = 0.4 × EHS + 0.6 × OPI</span>
         </div>
         <div className="panel">
-          <TrendChart data={history} />
+          <ComingSoon>
+            <TrendChart data={history} />
+          </ComingSoon>
         </div>
       </section>
+
+      {uploadResults && (
+        <section className="block">
+          <div className="block-head">
+            <h2>Recent Upload Results</h2>
+            <button className="btn btn-ghost btn-sm" onClick={() => setUploadResults(null)}>Clear</button>
+          </div>
+          <div className="table-scroll">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Employee Name</th>
+                  <th scope="col" className="num">PACE Score</th>
+                  <th scope="col">Risk Band</th>
+                </tr>
+              </thead>
+              <tbody>
+                {uploadResults.map((r, i) => (
+                  <tr key={i}>
+                    <th scope="row">{r.employee}</th>
+                    <td className="num"><strong>{f2(r.pace)}</strong></td>
+                    <td>
+                      <RiskBadge category={r.risk.toLowerCase() as any} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <div className="split">
         <section className="block" aria-labelledby="teams-h">
@@ -217,7 +269,9 @@ export default function OrgView() {
                       <td className="num">{f2(t.latest.ehs)}</td>
                       <td className="num">{f2(t.latest.opi)}</td>
                       <td>
-                        <Sparkline values={t.sparkline} category={classify(t.latest.pace)} />
+                        <ComingSoon>
+                          <Sparkline values={t.sparkline} category={classify(t.latest.pace)} />
+                        </ComingSoon>
                       </td>
                       <td className="mixcell">
                         <RiskBar mix={t.mix} />
@@ -263,7 +317,9 @@ export default function OrgView() {
               ? 'All flagged patterns have been human-reviewed.'
               : `${waiting} pattern${waiting > 1 ? 's' : ''} waiting for manager review.`}
           </p>
-          <ReviewQueue items={filteredQueue} />
+          <ComingSoon>
+            <ReviewQueue items={filteredQueue} />
+          </ComingSoon>
         </section>
       </div>
     </div>

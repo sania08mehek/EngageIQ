@@ -1,5 +1,51 @@
-employee_id,employee_name,meeting_load,focus_gap,response_latency,after_hours_ratio,completion_rate,velocity,deadline_adherence,code_activity,rework_ratio
-101,Alice Smith,0.2,0.1,0.2,0.05,0.9,0.85,0.95,0.8,0.05
-102,Bob Johnson,0.8,0.7,0.6,0.5,0.6,0.5,0.4,0.3,0.3
-103,Charlie Davis,0.4,0.3,0.3,0.1,0.8,0.7,0.8,0.7,0.1
-104,Diana Evans,0.9,0.9,0.8,0.8,0.3,0.2,0.1,0.1,0.5
+employee_id,employee_name,team_id,team_name,meeting_load,focus_gap,response_latency,after_hours_ratio,completion_rate,velocity,deadline_adherence,code_activity,rework_ratio
+d70c0f13,Richard Brock,platform,Platform Engineering,0.19,0.17,0.03,0.1,0.73,0.95,0.73,0.59,0.06
+c4ba4e55,Luis Rojas,marketing,Growth Marketing,0.55,0.29,0.38,0.23,0.52,0.47,0.47,0.45,0.19
+a8b842dc,James Johnson,marketing,Growth Marketing,0.44,0.46,0.49,0.35,0.42,0.45,0.79,0.36,0.38
+779f3dc4,Paul Robinson,data-ml,Data and ML,0.3,0.03,0.16,0.07,0.73,0.92,0.98,0.81,0.06
+0941511f,Jonathan Leach,data-ml,Data and ML,0.17,0.17,0.07,0.18,0.97,0.65,0.85,0.7,0.15
+a03a43db,Phyllis Mosley,core,Core Infrastructure,0.36,0.44,0.57,0.4,0.43,0.59,0.78,0.45,0.26
+d83e91b9,Mark Newman,support,Customer Support,0.6,0.23,0.53,0.26,0.4,0.45,0.67,0.36,0.16
+bf89a419,James Mueller,sales,Enterprise Sales,0.8,0.8,0.7,0.68,0.25,0.21,0.2,0.2,0.44
+8b08c15e,John Humphrey,design,Product Design,0.21,0.16,0.0,0.09,0.89,0.87,0.87,0.73,0.12
+8683f712,Brianna Carter,platform,Platform Engineering,0.47,0.32,0.6,0.48,0.58,0.46,0.79,0.53,0.17
+9cd2738c,Michael Gray,core,Core Infrastructure,0.56,0.4,0.42,0.27,0.61,0.57,0.8,0.35,0.38
+016b8e13,Courtney Tyler,sales,Enterprise Sales,0.27,0.21,0.22,0.13,0.79,0.71,0.77,0.88,0.17
+50ce03e8,Jaime Roberts MD,sales,Enterprise Sales,0.44,0.45,0.34,0.41,0.57,0.43,0.56,0.5,0.2
+fb4f77ca,Jessica Bryant,marketing,Growth Marketing,0.47,0.26,0.6,0.23,0.57,0.51,0.49,0.48,0.27
+19e1c642,Cody Schroeder,core,Core Infrastructure,0.82,0.72,0.9,0.92,0.38,0.11,0.26,0.19,0.42
+c6b24786,Mary Johnson,core,Core Infrastructure,0.28,0.2,0.11,0.01,0.95,0.77,0.77,0.58,0.04
+c658f801,Dillon Brown,data-ml,Data and ML,0.04,0.02,0.12,0.17,0.75,0.9,0.82,0.81,0.02
+8a94521e,Kevin Mclean,marketing,Growth Marketing,0.32,0.36,0.53,0.37,0.46,0.56,0.54,0.45,0.35
+4e9157ce,Melanie Burke,data-ml,Data and ML,0.34,0.45,0.4,0.2,0.51,0.44,0.69,0.53,0.23
+9cf57fc6,Kayla Fitzgerald,sales,Enterprise Sales,0.97,0.84,0.72,0.77,0.28,0.37,0.26,0.14,0.93
+ffd6bba2,Mark Jones,design,Product Design,0.55,0.22,0.49,0.49,0.46,0.59,0.54,0.45,0.18
+73a9589e,Kristy Sullivan,core,Core Infrastructure,0.18,0.08,0.09,0.13,1.0,0.67,0.88,0.9,0.14
+e4c707c2,Ashley Weber,platform,Platform Engineering,0.31,0.36,0.53,0.22,0.41,0.43,0.8,0.39,0.36
+5c1e7bf3,Jorge Lin,design,Product Design,0.91,0.54,0.87,0.66,0.33,0.22,0.28,0.26,0.46
+fc5c890f,Jaime Jones,core,Core Infrastructure,0.24,0.02,0.1,0.05,0.96,0.72,0.77,0.66,0.2
+bfb4cdfa,David Gomez,core,Core Infrastructure,0.41,0.34,0.51,0.39,0.43,0.41,0.73,0.48,0.31
+11f6c02f,Ashley Parker,core,Core Infrastructure,0.93,0.87,0.66,0.91,0.22,0.35,0.12,0.21,0.52
+312bc88d,Vanessa Jones,sales,Enterprise Sales,0.06,0.3,0.26,0.17,0.77,0.98,0.98,0.61,0.12
+95c75927,Anthony Landry,design,Product Design,0.36,0.45,0.52,0.35,0.68,0.7,0.53,0.49,0.14
+a3bab139,Dustin Watson,platform,Platform Engineering,0.57,0.5,0.33,0.24,0.45,0.62,0.78,0.62,0.37
+91760ba4,Allison Wilson,core,Core Infrastructure,0.94,0.61,0.89,0.65,0.29,0.3,0.34,0.31,0.75
+ebdd96f9,Lindsey Schaefer,marketing,Growth Marketing,0.75,0.76,0.6,0.67,0.3,0.19,0.28,0.25,0.89
+02f6a8be,Heather Perry,sales,Enterprise Sales,0.22,0.3,0.22,0.06,0.73,0.82,0.93,0.94,0.17
+781bb8ca,Debra Welch,design,Product Design,0.99,0.89,0.84,0.54,0.21,0.27,0.14,0.32,0.94
+997a072a,Nancy Garcia,core,Core Infrastructure,0.42,0.4,0.51,0.3,0.43,0.46,0.51,0.32,0.14
+a76e3f9f,Jessica Rhodes,support,Customer Support,0.12,0.12,0.21,0.03,0.96,0.91,0.96,0.58,0.19
+723fda71,Lauren White,support,Customer Support,0.57,0.42,0.6,0.49,0.57,0.51,0.67,0.57,0.15
+485dec1a,Jeremy Gutierrez,support,Customer Support,0.04,0.25,0.04,0.13,0.87,0.81,0.95,0.54,0.08
+4db08c64,Terri Mendez,marketing,Growth Marketing,0.8,0.72,0.89,0.54,0.34,0.15,0.39,0.18,0.92
+fc3b985e,Steven Hernandez,marketing,Growth Marketing,0.45,0.39,0.35,0.46,0.44,0.65,0.51,0.3,0.35
+9cf92969,Christopher Larson,sales,Enterprise Sales,0.06,0.17,0.1,0.04,0.73,0.79,0.91,0.74,0.12
+a702658e,Christopher Lewis,sales,Enterprise Sales,0.26,0.01,0.22,0.02,0.96,0.76,0.72,0.53,0.16
+32e1b460,John Taylor,design,Product Design,0.31,0.22,0.42,0.22,0.56,0.58,0.79,0.61,0.25
+b2a8678b,Linda Munoz,design,Product Design,0.85,0.74,0.68,0.74,0.27,0.23,0.4,0.13,0.67
+54c2f44a,Thomas Aguilar DVM,design,Product Design,0.3,0.48,0.47,0.4,0.61,0.68,0.51,0.54,0.26
+2f119c2b,Samuel Byrd,data-ml,Data and ML,0.3,0.47,0.3,0.26,0.55,0.67,0.47,0.33,0.37
+94dfb09f,Natalie Johnson,design,Product Design,0.4,0.48,0.5,0.44,0.67,0.52,0.77,0.54,0.26
+2dcb2643,Kayla West,sales,Enterprise Sales,0.57,0.41,0.4,0.22,0.41,0.48,0.57,0.42,0.14
+f7314e35,Amber Reeves,platform,Platform Engineering,0.4,0.46,0.37,0.23,0.59,0.57,0.48,0.49,0.17
+e43701e5,Lisa Hernandez,support,Customer Support,0.47,0.3,0.38,0.42,0.45,0.45,0.73,0.42,0.25
