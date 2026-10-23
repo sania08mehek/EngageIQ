@@ -43,7 +43,8 @@ export default function Layout() {
           <nav aria-label="Main" className={`nav ${mobileMenuOpen ? 'nav-open' : ''}`}>
             <NavLink to="/" end>Overview</NavLink>
             <NavLink to="/dashboard">Dashboard</NavLink>
-            <NavLink to="/pace-score">PACE score</NavLink>
+            <NavLink to="/integrations">Integrations</NavLink>
+            <NavLink to="/pace-score">PACE Simulator</NavLink>
           </nav>
 
           <div className="header-actions">
@@ -86,6 +87,7 @@ export default function Layout() {
               <h4>Platform</h4>
               <Link to="/">Overview & Principles</Link>
               <Link to="/dashboard">Organization Dashboard</Link>
+              <Link to="/integrations">Data Connectors & Pipelines</Link>
               <Link to="/pace-score">PACE Score Simulator</Link>
             </div>
             <div className="footer-col">
