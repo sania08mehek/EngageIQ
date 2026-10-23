@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAsync } from '../hooks/useAsync';
-import { ErrorState, Loading, SampleNotice, ComingSoon } from '../components/States';
+import { ErrorState, Loading } from '../components/States';
 import Stat from '../components/Stat';
 import RiskBar from '../components/RiskBar';
 import Sparkline from '../components/Sparkline';
@@ -116,7 +116,6 @@ export default function OrgView() {
           <p className="muted">
             {data.headcount} people across {filteredTeams.length} teams.
           </p>
-          <SampleNotice />
         </div>
         <button className="btn" onClick={() => setIsUploadOpen(true)}>Upload CSV Data</button>
       </header>
@@ -147,9 +146,7 @@ export default function OrgView() {
           <span className="muted fineprint">Composite PACE = 0.4 × EHS + 0.6 × OPI</span>
         </div>
         <div className="panel">
-          <ComingSoon>
-            <TrendChart data={history} />
-          </ComingSoon>
+          <TrendChart data={history} />
         </div>
       </section>
 
@@ -269,9 +266,7 @@ export default function OrgView() {
                       <td className="num">{f2(t.latest.ehs)}</td>
                       <td className="num">{f2(t.latest.opi)}</td>
                       <td>
-                        <ComingSoon>
-                          <Sparkline values={t.sparkline} category={classify(t.latest.pace)} />
-                        </ComingSoon>
+                        <Sparkline values={t.sparkline} category={classify(t.latest.pace)} />
                       </td>
                       <td className="mixcell">
                         <RiskBar mix={t.mix} />
@@ -317,9 +312,7 @@ export default function OrgView() {
               ? 'All flagged patterns have been human-reviewed.'
               : `${waiting} pattern${waiting > 1 ? 's' : ''} waiting for manager review.`}
           </p>
-          <ComingSoon>
-            <ReviewQueue items={filteredQueue} />
-          </ComingSoon>
+          <ReviewQueue items={filteredQueue} />
         </section>
       </div>
     </div>
