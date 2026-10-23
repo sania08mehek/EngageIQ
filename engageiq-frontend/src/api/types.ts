@@ -146,3 +146,37 @@ export interface TeamDetail extends GroupSummary {
   members: EmployeeRow[];
   queue: QueueItem[];
 }
+
+export interface ConnectorInfo {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  status: 'connected' | 'active' | 'synced' | 'pending';
+  mode: string;
+  metrics: string[];
+  lastSync: string;
+  bufferedEvents: number;
+  icon: string;
+}
+
+export interface MappedIdentity {
+  employeeId: string;
+  name: string;
+  role: string;
+  team: string;
+  timezone: string;
+  accounts: {
+    slack?: string;
+    jira?: string;
+    github?: string;
+    calendar?: string;
+  };
+}
+
+export interface IntegrationsStatus {
+  status: string;
+  connectors: ConnectorInfo[];
+  mappedIdentitiesCount: number;
+  identities: MappedIdentity[];
+}

@@ -1,14 +1,19 @@
 /**
- * The only file the pages use to get data.
- *
- * Right now every call returns sample data from mock.ts.
- * When your FastAPI backend is ready, set VITE_API_URL (see .env.example) and the same calls
- * go over HTTP instead. Each function lists the endpoint it expects and the type it should return.
+ * EngageIQ API Client
+ * Production client connecting directly to the EngageIQ FastAPI PACE backend.
+ * Provides end-to-end integration for Organization, Team, Employee, PACE Scores,
+ * Human Reviews, CSV Uploads, and Multi-Source Connectors.
  */
-import * as mock from './mock';
-import type { EmployeeDetail, OrgSummary, ReviewInput, ReviewRecord, TeamDetail } from './types';
+import type {
+  EmployeeDetail,
+  OrgSummary,
+  ReviewInput,
+  ReviewRecord,
+  TeamDetail,
+  IntegrationsStatus,
+} from './types';
 
-const BASE = 'http://localhost:8000';
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const USING_SAMPLE_DATA = false;
 
@@ -18,46 +23,75 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
   });
   if (!res.ok) {
-    throw new Error(res.status === 404 ? 'That record was not found.' : `The server returned an error (${res.status}).`);
+    let errorDetail = `The server returned an error (${res.status}).`;
+    try {
+      const errJson = await res.json();
+      if (errJson && errJson.detail) {
+        errorDetail = errJson.detail;
+      }
+    } catch {
+      // fallback to status text
+    }
+    throw new Error(res.status === 404 ? 'That record was not found.' : errorDetail);
   }
   return (await res.json()) as T;
 }
 
-const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-async function fetchRealAndApply() {
-  try {
-    const scores = await http<any[]>('/api/scores');
-    if (scores && scores.length > 0) {
-      mock.applyRealData(scores);
-    }
-  } catch (e) {
-    console.warn("Failed to fetch real data from backend, falling back to pure mock.", e);
-  }
-}
-
-async function call<T>(path: string, sample: () => T, init?: RequestInit): Promise<T> {
-  await fetchRealAndApply();
-  await pause(120); // lets loading states show while there is no network
-  return sample();
-}
-
 export const api = {
   /** GET /api/organization -> OrgSummary */
-  organization: () => call<OrgSummary>('/api/organization', () => mock.organization()),
+  organization: () => http<OrgSummary>('/api/organization'),
 
   /** GET /api/teams/{teamId} -> TeamDetail */
-  team: (teamId: string) => call<TeamDetail>(`/api/teams/${encodeURIComponent(teamId)}`, () => mock.team(teamId)),
+  team: (teamId: string) => http<TeamDetail>(`/api/teams/${encodeURIComponent(teamId)}`),
 
   /** GET /api/employees/{employeeId} -> EmployeeDetail */
   employee: (employeeId: string) =>
-    call<EmployeeDetail>(`/api/employees/${encodeURIComponent(employeeId)}`, () => mock.employee(employeeId)),
+    http<EmployeeDetail>(`/api/employees/${encodeURIComponent(employeeId)}`),
 
   /** POST /api/employees/{employeeId}/reviews  body: { outcome, note } -> ReviewRecord */
   submitReview: (input: ReviewInput) =>
-    call<ReviewRecord>(
+    http<ReviewRecord>(
       `/api/employees/${encodeURIComponent(input.employeeId)}/reviews`,
-      () => mock.addReview(input),
       { method: 'POST', body: JSON.stringify({ outcome: input.outcome, note: input.note }) },
     ),
+
+  /** GET /api/scores -> ScoreRecord[] */
+  scores: () => http<any[]>('/api/scores'),
+
+  /** GET /api/integration/status -> IntegrationsStatus */
+  integrationsStatus: () => http<IntegrationsStatus>('/api/integration/status'),
+
+  /** POST /api/integration/sync/{connectorId} -> Sync Result */
+  syncConnector: (connectorId: string) =>
+    http<any>(`/api/integration/sync/${encodeURIComponent(connectorId)}`, { method: 'POST' }),
+
+  /** POST /api/integration/run-aggregation -> Multi-source unified records */
+  runAggregation: (daysBack: number = 7) =>
+    http<any[]>(`/api/integration/run-aggregation?days_back=${daysBack}`, { method: 'POST' }),
+
+  /** POST /api/integration/webhooks/{source} -> Webhook Receiver */
+  sendWebhook: (source: 'slack' | 'github' | 'jira', payload: any) =>
+    http<any>(`/api/integration/webhooks/${source}`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  /** POST /api/upload -> Upload CSV File */
+  uploadCsv: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${BASE}/api/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) {
+      let detail = 'Upload failed';
+      try {
+        const err = await res.json();
+        detail = err.detail || detail;
+      } catch {}
+      throw new Error(detail);
+    }
+    return await res.json();
+  },
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../api/client';
 
 export default function UploadModal({
   onClose,
@@ -45,25 +46,12 @@ export default function UploadModal({
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     setIsProcessing(true);
-    setStatus('Processing metadata...');
+    setStatus('Processing metadata through 5-step pipeline...');
     try {
-      const response = await fetch('http://localhost:8000/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Upload failed');
-      }
-
-      const results = await response.json();
+      const results = await api.uploadCsv(file);
       setStatus('Success! Processing complete.');
-      onSuccess(results.data);
+      onSuccess(results.data || []);
       setIsSuccess(true);
     } catch (error: any) {
       setStatus(`Error: ${error.message}`);
