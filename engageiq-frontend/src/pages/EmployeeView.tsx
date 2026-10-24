@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { useAsync } from '../hooks/useAsync';
-import { Breadcrumb, ErrorState, Loading, SampleNotice, ComingSoon } from '../components/States';
+import { Breadcrumb, ErrorState, Loading } from '../components/States';
 import RiskBadge from '../components/RiskBadge';
 import TrendChart from '../components/TrendChart';
 import ReviewPanel from '../components/ReviewPanel';
@@ -100,7 +100,6 @@ export default function EmployeeView() {
           <p className="muted">
             {e.roleName} on {e.teamName} · Evaluated against own history
           </p>
-          <SampleNotice />
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -138,9 +137,7 @@ export default function EmployeeView() {
               <span className="muted fineprint">Dashed line = {e.name.split(' ')[0]}&apos;s own usual baseline</span>
             </div>
             <div className="panel">
-              <ComingSoon>
-                <TrendChart data={data.history} baseline={data.baselinePace} />
-              </ComingSoon>
+              <TrendChart data={data.history} baseline={data.baselinePace} />
             </div>
           </section>
 
@@ -151,18 +148,16 @@ export default function EmployeeView() {
             <p className="muted" style={{ marginBottom: '1.25rem' }}>
               The last 4 weeks against {e.name.split(' ')[0]}&apos;s own usual level. Output measures are calibrated to fit the role ({e.roleName}).
             </p>
-            <ComingSoon>
-              <FeatureTable
-                title="How work happens (EHS · 40%)"
-                tone="ehs"
-                rows={data.features.filter((f) => f.layer === 'signal')}
-              />
-              <FeatureTable
-                title="What is delivered (OPI · 60%)"
-                tone="opi"
-                rows={data.features.filter((f) => f.layer === 'output')}
-              />
-            </ComingSoon>
+            <FeatureTable
+              title="How work happens (EHS · 40%)"
+              tone="ehs"
+              rows={data.features.filter((f) => f.layer === 'signal')}
+            />
+            <FeatureTable
+              title="What is delivered (OPI · 60%)"
+              tone="opi"
+              rows={data.features.filter((f) => f.layer === 'output')}
+            />
           </section>
         </div>
 
@@ -201,14 +196,12 @@ export default function EmployeeView() {
             </p>
           </section>
 
-          <ComingSoon>
-            <ReviewPanel
-              employeeId={e.id}
-              status={data.reviewStatus}
-              reviews={data.reviews}
-              onSaved={reload}
-            />
-          </ComingSoon>
+          <ReviewPanel
+            employeeId={e.id}
+            status={data.reviewStatus}
+            reviews={data.reviews}
+            onSaved={reload}
+          />
         </aside>
       </div>
     </div>

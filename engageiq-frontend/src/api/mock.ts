@@ -11,6 +11,7 @@ import {
   mean,
   trendDirection,
   type FeatureReading,
+  type RiskCategory,
   type WeeklyScore,
 } from '../lib/pace';
 import { f2 } from '../lib/format';

@@ -5,6 +5,7 @@ import OrgView from './pages/OrgView';
 import TeamView from './pages/TeamView';
 import EmployeeView from './pages/EmployeeView';
 import PaceScore from './pages/PaceScore';
+import Integrations from './pages/Integrations';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="dashboard" element={<OrgView />} />
         <Route path="dashboard/teams/:teamId" element={<TeamView />} />
         <Route path="dashboard/people/:employeeId" element={<EmployeeView />} />
+        <Route path="integrations" element={<Integrations />} />
         <Route path="pace-score" element={<PaceScore />} />
         <Route path="*" element={<NotFound />} />
       </Route>

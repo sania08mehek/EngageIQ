@@ -58,8 +58,9 @@ export default function Home() {
             We synthesize calendar events and project delivery metrics into a unified health score. By flagging subtle shifts in work patterns, EngageIQ empowers leaders to have meaningful conversations before burnout happens.
           </p>
           <div className="actions">
-            <button className="btn" onClick={() => setIsUploadOpen(true)}>Get Started (Upload Data)</button>
-            <Link className="btn btn-ghost" to="/pace-score">Try the PACE score</Link>
+            <Link className="btn" to="/dashboard">View Dashboard</Link>
+            <Link className="btn btn-ghost" to="/integrations">Data Connectors</Link>
+            <Link className="btn btn-ghost" to="/pace-score">PACE Simulator</Link>
           </div>
         </div>
         <figure className="hero-lens">
@@ -161,9 +162,13 @@ export default function Home() {
       </section>
 
       <section className="wrap section closing">
-        <h2>Look at a sample team</h2>
-        <p>The dashboard shows an organization, its teams and each person, with the review queue a manager works through.</p>
-        <button className="btn" onClick={() => setIsUploadOpen(true)}>Upload Data</button>
+        <h2>Explore Live Organization Analytics</h2>
+        <p>The dashboard evaluates multi-source work telemetry across teams and individuals, paired with a manager review queue.</p>
+        <div className="actions" style={{ justifyContent: 'center' }}>
+          <Link className="btn" to="/dashboard">Open Dashboard</Link>
+          <Link className="btn btn-ghost" to="/integrations">Connect Data Sources</Link>
+          <button className="btn btn-ghost" onClick={() => setIsUploadOpen(true)}>Upload CSV Data</button>
+        </div>
       </section>
     </>
   );
