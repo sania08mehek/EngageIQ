@@ -1,0 +1,40 @@
+{
+  "dataset_info": {
+    "total_records": 500,
+    "train_size": 350,
+    "validate_size": 75,
+    "test_size": 75,
+    "source_1": "ai_developer_productivity.csv (1000 rows, 100 unique devs)",
+    "source_2": "Extended_Employee_Performance_and_Productivity_Data.csv (100000 rows)"
+  },
+  "pace_results_test": {
+    "mean_ehs": 0.5457,
+    "mean_opi": 0.3864,
+    "mean_pace": 0.4501,
+    "std_pace": 0.073,
+    "risk_distribution": {
+      "Moderate": "57",
+      "At-Risk": "18"
+    }
+  },
+  "space_results_test": {
+    "mean_satisfaction": 0.6054,
+    "mean_performance": 0.5465,
+    "mean_activity": 0.4203,
+    "mean_communication": 0.5247,
+    "mean_efficiency": 0.565,
+    "mean_composite": 0.5324,
+    "std_composite": 0.0792,
+    "risk_distribution": {
+      "Moderate": "71",
+      "At-Risk": "4"
+    }
+  },
+  "comparison_metrics": {
+    "risk_band_agreement": 0.8133,
+    "score_correlation_pearson_r": 0.6078,
+    "mean_absolute_score_diff": 0.086,
+    "pace_cv": 0.1621,
+    "space_cv": 0.1487
+  }
+}
