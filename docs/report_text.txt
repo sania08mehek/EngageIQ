@@ -1,0 +1,465 @@
+Chapter 1
+INTRODUCTION
+The shift towards remote and hybrid working has made physical presence an unreliable measure of employee productivity, engagement, and collaboration. Traditional monitoring methods, such as keystroke tracking, screenshots, and webcam surveillance, can also raise concerns about privacy, personal autonomy, and workplace trust.
+EngageIQ addresses these challenges through a dual-layer approach that considers both work patterns and actual work outcomes.
+Signal Layer: Examines work patterns using indicators such as meeting load, focus-time gaps, response delays, and after-hours activity.
+Output Layer: Measures actual work delivery through task completion, sprint velocity, deadline adherence, code commits, pull requests, self-reported effort, and rework.
+Both layers are combined through the PACE (Productivity Assessment and Context Evaluation) framework, which assigns 40% weightage to EHS and 60% to OPI.
+Rather than making automated employee decisions, EngageIQ identifies trends, unusual patterns, and potential risks for further review. Its Human-in-the-Loop (HITL) approach follows a structured process:
+Collect → Normalise → Measure → Score → Detect Trends → Flag Risk → Human Review
+This approach promotes data-driven and transparent workplace assessments, ensuring that insights support human judgement instead of relying solely on employee monitoring or individual performance metrics.
+1.1Background 
+Remote and hybrid work have made it difficult for organisations to assess employee productivity based on physical presence alone. EngageIQ addresses this gap by focusing on work patterns and actual work outcomes through two layers: the Signal Layer and the Output Layer.
+The Signal Layer uses approved work-related metadata from platforms such as Google Calendar, Microsoft Outlook, Slack, and Microsoft Teams. The Output Layer collects delivery-related information from tools such as Jira, Asana, GitHub, and GitLab to assess task progress and completion.
+The system follows a data-minimisation approach, collecting only the information required for the approved productivity metrics. Its design also draws on the SPACE framework, which recognises that productivity involves multiple dimensions rather than a single activity or measurement.
+EngageIQ does not attempt to diagnose burnout. The WHO classifies burnout as an occupational phenomenon rather than a medical condition [8]. Instead, the framework identifies unusual work patterns that may need attention, leaving further assessment to authorised human reviewers. It does not make medical diagnoses or automated 
+1.2 Statistics 
+Recent studies highlight the importance of employee engagement and workplace well-being in modern organisations. Gallup reported that global employee engagement stood at 20% in 2025, compared to 23% in India, showing that employee engagement remains a major workplace challenge.
+The International Labour Organization (ILO) also links psychosocial risks to more than 840,000 deaths and nearly 45 million disability-adjusted life years (DALYs) annually. Factors such as heavy workloads, long working hours, limited autonomy, unclear responsibilities, and workplace inequality contribute to these concerns.
+These findings provide the motivation behind EngageIQ. However, the framework does not directly measure employee engagement or health outcomes. Instead, it analyses work patterns and productivity indicators to identify trends that may require further attention.
+Table 1.1: Workplace Engagement and Psychosocial-Risk Statistics
+
+1.3 Prior existing technologies 
+Workplace analytics mainly includes employee monitoring, people analytics, multidimensional productivity frameworks, predictive machine learning, and anomaly detection. Although these approaches help organisations understand employee behaviour and performance, they also raise concerns about privacy, accuracy, transparency, and human oversight. These limitations have influenced the design and development of EngageIQ.
+Table 1.2: Comparison of Prior Technologies
+
+ Proposed approach 
+EngageIQ is a privacy-focused employee analytics framework designed to understand employees' work patterns and actual performance using approved workplace data. It processes the collected information and extracts relevant features to calculate two key measures: Employee Health Score (EHS) and Output Performance Index (OPI).
+The two measures are combined to calculate the PACE score using the following formula:
+                                  PACE = (0.4 × EHS) + (0.6 × OPI)
+The framework also analyses historical data to identify unusual patterns and changes over time. The Signal Layer examines meeting schedules, workload distribution, and focus time, while the Output Layer evaluates task completion and actual work delivery. Combining these indicators provides a broader view of workplace productivity.
+EngageIQ presents its findings through manager dashboards, trend analysis, alerts, and explanations. A Human-in-the-Loop (HITL) approach ensures that potential risks are reviewed by authorised individuals rather than being treated as final decisions.
+The framework's reliability depends on data quality, availability, platform compatibility, and sufficient historical records. Its proposed risk thresholds also require validation using real-world datasets.
+Therefore, the identified risk levels are intended only as indicators for further review and should not independently determine employee performance or employment-related decisions.
+Objectives 
+Objective 1: Develop a dual-layer analytics framework that evaluates employees' work-pattern health through the Employee Health Score (EHS) and measures actual work output through the Output Performance Index (OPI) using approved workplace metadata.
+Objective 2: Implement the PACE scoring mechanism by combining EHS and OPI through the defined weighted formula, assigning 40% weightage to EHS and 60% to OPI.
+Objective 3: Introduce trend and anomaly detection techniques to identify sudden changes, unusual patterns, and persistent deviations in employees' historical work-pattern and productivity scores.
+Objective 4: Develop a risk classification mechanism that groups analytical results into Healthy, Moderate, and At-Risk categories, along with explanations highlighting the factors contributing to each classification.
+Objective 5: Integrate privacy controls and a Human-in-the-Loop (HITL) review mechanism to ensure that system-generated risk indicators are evaluated by authorised personnel rather than being used to make automated decisions about employees.
+SDGs 
+EngageIQ supports four United Nations Sustainable Development Goals: SDG 3, SDG 8, SDG 9, and SDG 16. These goals align with the project's focus on employee well-being, workplace productivity, technological innovation, and responsible data management. However, the framework does not directly measure official SDG indicators.
+1. SDG 3 – Good Health and Well-Being
+EngageIQ examines meeting patterns, after-hours activity, and collaboration levels to identify possible workload concerns. These insights can help organisations promote healthier working conditions. The system does not diagnose burnout or medical conditions.
+2. SDG 8 – Decent Work and Economic Growth
+The framework evaluates productivity through actual work outcomes rather than relying only on working hours or online activity. It considers work quality, task completion, and delivery performance to support a more balanced approach to employee assessment.
+3. SDG 9 – Industry, Innovation and Infrastructure
+EngageIQ combines AI/ML, data processing, APIs, and analytical dashboards to build a technology-driven workplace analytics framework that helps organisations better understand employee work patterns and performance.
+4. SDG 16 – Peace, Justice and Strong Institutions
+The project promotes privacy, data minimisation, transparency, and responsible data handling. Its Human-in-the-Loop (HITL) approach ensures that system-generated insights are reviewed by authorised individuals rather than being used for automatic employment decisions.
+Table 1.3: Alignment of EngageIQ with the Sustainable Development Goals
+
+ Overview of project report 
+This report is organized into nine chapters.
+ Chapter 1 – Introduction presents the background, existing technologies, proposed approach, objectives, and SDG alignment. 
+Chapter 2 – Literature Review discusses relevant research and the identified research gap. 
+Chapter 3 – Methodology describes the data processing, EHS, OPI, PACE scoring, anomaly detection, and Human-in-the-Loop process. 
+Chapter 4 – Project Management covers scope, phases, responsibilities, and risks. Chapter 5 – Analysis and Design presents requirements, architecture, data flow, database design, and user roles.
+ Chapter 6 – Implementation and Development describes the technologies, prototype, scoring system, dashboard, and privacy controls.
+ Chapter 7 – Evaluation and Results presents algorithm verification and complexity analysis. 
+Chapter 8 – Social, Legal, Ethical, Sustainability and Safety Aspects discusses responsible AI, privacy, governance, and safe use. 
+Chapter 9 – Conclusion summarizes the project and future enhancements.
+
+
+
+
+
+
+Chapter 2
+LITERATURE REVIEW
+This chapter explores existing research related to employee productivity, people analytics, workplace well-being, machine learning, and anomaly detection. It provides the theoretical background for the development of EngageIQ while examining how different approaches are used to understand workplace performance. It also highlights the limitations of relying on a single metric to evaluate employee productivity, establishing the need for a more comprehensive, multidimensional approach.
+2.1 Multidimensional Productivity Measurement
+Forsgren et al. proposed the SPACE framework, which highlights that developer productivity involves multiple dimensions and cannot be accurately evaluated using just one activity-based measure [1]. This idea forms the basis of EngageIQ's dual-layer approach, where work-pattern health and actual work output are evaluated separately to provide a more balanced understanding of employee productivity.
+2.1.1 Relevance to EngageIQ
+EngageIQ adopts this multidimensional approach through two complementary measures: EHS (Employee Health Score) and OPI (Output Performance Index). EHS focuses on employees' work patterns and overall work-pattern health, while OPI evaluates their actual work delivery and outcomes. Both indicators are brought together through the PACE framework, providing a more comprehensive view of workplace productivity.
+2.2 People Analytics and Employee Prediction
+Polzer discusses the increasing importance of people analytics in helping organisations understand workforce trends, identify internal patterns, and make better-informed decisions [3]. However, the value of these insights largely depends on the quality of the data, how accurately the results are interpreted, and the presence of responsible data governance practices.
+2.2.1 Machine Learning for Employee Prediction
+Talebi et al. examined various machine learning techniques for predicting employee turnover, highlighting how these methods can be applied to workforce-related analysis [2]. Their study also points out the importance of selecting suitable models and maintaining good data quality to achieve reliable results. Building on a similar analytical approach, EngageIQ incorporates data analytics and machine learning techniques within an explainable framework, where the generated insights are further examined through human review rather than being treated as final decisions.
+2.3 Burnout and Work-Pattern Analytics
+Liu et al. introduced HiPAL, a deep-learning-based framework that uses activity logs to predict potential burnout among employees [4]. In contrast, EngageIQ takes a different approach by concentrating on changes in work patterns and productivity indicators rather than attempting to predict or diagnose burnout. Any unusual patterns identified by the system are treated as potential warning signals and are referred for human review, ensuring that the results are not interpreted as medical conclusions.
+2.3.1 Responsible Interpretation
+The World Health Organization (WHO) recognises burnout as an occupational phenomenon rather than a medical condition [8]. Keeping this distinction in mind, EngageIQ does not attempt to diagnose burnout. Instead, it identifies work-related patterns that may indicate a need for further attention, with all such observations subject to a Human-in-the-Loop (HITL) review process before any conclusions are drawn.
+2.4.1 Comparison of Analytical Approaches
+Table 2.1: Literature Review Summary
+2.5 Research Gap and Relevance to EngageIQ
+Existing research explores productivity measurement, people analytics, predictive modelling, and anomaly detection. EngageIQ brings these concepts together through a privacy-focused framework that combines work-pattern health with actual work output. It gives greater importance to measurable results, identifies unusual changes over time, and ensures that all potential risk signals are reviewed by humans rather than triggering automatic employee decisions.
+
+                    
+
+
+
+
+Chapter 3
+METHODOLOGY
+This chapter explains how approved workplace data is converted into meaningful and explainable productivity insights. It follows the proposed system architecture, covering each stage from data collection and processing to scoring, analysis, and final Human-in-the-Loop review.
+3.1 Research and Development Method
+The project follows an iterative, prototype-based approach, starting with synthetic data to test the scoring mechanism and gradually moving towards real data integration, dashboard development, validation, and advanced analytics. This allows the MVP to be developed and tested early, while more advanced integrations and time-series analysis are introduced as sufficient historical data becomes available.
+3.1.1 Methodological Stages
+Define privacy boundaries and identify approved workplace data sources.
+Collect or generate simulated workplace data.
+Clean, validate, normalise, and organise the collected data.
+Extract relevant features for calculating EHS and OPI.
+Calculate EHS and OPI separately.
+Combine both scores to generate the PACE score.
+Analyse historical data to identify trends and unusual patterns.
+Classify potential risks and generate supporting explanations.
+Display insights through dashboards and alerts.
+Forward flagged cases for authorised Human-in-the-Loop review.
+3.2 Data Sources and Data Boundary
+The architecture is built around two main data categories: communication and scheduling data for the Signal Layer, and project management and development data for the Output Layer. It follows a data-minimisation approach, collecting only the essential work-related metadata and delivery information needed for analysis.
+
+3.2.1 Privacy Boundary
+EngageIQ follows strict privacy guidelines and excludes invasive monitoring practices such as keystroke logging, screen recording, webcam surveillance, private message access, personal browsing tracking, and continuous employee monitoring.
+Table 3.1: Core Data Sources and Features
+
+3.3 Data Processing and Feature Engineering
+Before the data reaches the scoring engine, it undergoes preprocessing and cleaning. This includes data validation, removal of unnecessary fields, timestamp standardisation, handling missing values, treating outliers, data aggregation, and feature extraction.
+3.3.1 Feature Engineering
+The Signal Layer analyses meeting load, focus-time gaps, response latency, and after-hours activity. The Output Layer measures task completion, sprint velocity, deadline adherence, code activity, self-reported effort, and rework. All features are normalised against relevant employee or role-based baselines to ensure more consistent 
+3.4 EHS Algorithm
+The Employee Health Score (EHS) evaluates employees' work-pattern health on a scale of 0 to 1, where higher scores indicate healthier work patterns.
+It uses a weighted formula that considers meeting load, focus-time gaps, response delays, and after-hours activity:
+ EHS = 1 - (0.30n_{meeting} + 0.30n_{focus} + 0.20n_{response} + 0.20n_{afterhr})
+The final score is restricted to the [0, 1] range. Under this normalisation method, lower values across these four indicators contribute to a higher EHS score. The calculation has a time complexity of O(n), as it processes the relevant events in a single pass.
+3.5 OPI Algorithm
+OPI (Output Productivity Index) measures tangible work delivery on a 0–1 scale using task completion, sprint velocity, deadline adherence, code activity, and rework.
+Key measures include:
+Completion rate = completed tasks / total tasks 
+Velocity = completed story points 
+Deadline adherence = on-time tasks / completed tasks 
+Code activity = commits + pull requests 
+Rework ratio = reopened or revised tasks / total tasks 
+The documented weighting begins with 0.25 for completion rate and 0.25 for velocity, with the remaining weights assigned to deadline adherence, code activity, and rework as defined in the project algorithm.
+3.6 PACE Fusion
+
+                                  Figure 3.2: PACE Dual-Lens Scoring Model
+The PACE score combines EHS and OPI using the defined weights:
+PACE = (0.4 × EHS) + (0.6 × OPI)
+For example, if EHS = 0.50 and OPI = 0.80, then PACE = 0.68. OPI receives a higher weight to emphasize tangible work output over communication or activity levels.
+3.7 Trend and Anomaly Detection
+EngageIQ identifies potential risks by analysing changes over time rather than relying on a single score. The MVP uses the previous six periods to calculate a rolling mean and standard deviation. Any deviation exceeding 1.5 standard deviations is flagged as an anomaly.The rolling-window calculation has a time complexity of O(window) per employee. More advanced techniques, such as LSTM-based models, may be introduced in the future when sufficient historical data is available.
+3.8 Risk Classification
+The PACE score is grouped into three risk categories for easier interpretation. These thresholds are provisional and must be validated using real-world datasets before being used in actual workplace assessments.
+Table 3.2: PACE Risk Classification Bands
+3.9 Human-in-the-Loop Review
+Human oversight is a core part of EngageIQ. The workflow is:
+Analytics → Risk Signal → Human Review → Contextual Decision
+Authorized reviewers may monitor trends, investigate workload or project blockers, correct data issues, provide support, or override a signal. The system is not designed to automatically terminate, penalize, or discipline employees.
+
+Chapter 4
+PROJECT MANAGEMENT
+This chapter outlines a phased development approach, allowing the core analytics framework to be demonstrated and validated before implementing the complete system integration.
+4.1 Project Scope and Work Breakdown
+Table 4.1: Project Work Breakdown
+4.1.1 Scope Boundaries
+Included: Work-pattern and delivery metadata, score calculation, trend analysis, risk detection, dashboards, and Human-in-the-Loop review.
+Excluded: Invasive monitoring methods such as screenshots, keystroke tracking, webcam surveillance, private message access, and personal browsing activity.
+Future Enhancements: Advanced enterprise integrations and LSTM-based modelling may be introduced in later phases, depending on data availability and implementation resources.
+4.2 Development Phases
+Development Phases
+Phase 1 – Prototype Development: Implement the core scoring mechanism using synthetic or mock workplace data.
+Phase 2 – API Integration: Connect approved workplace platforms and store validated, normalised records.
+Phase 3 – Analytics Enhancement: Improve historical trend analysis, anomaly detection, and risk classification.
+Phase 4 – Validation and Refinement: Evaluate scoring thresholds, explanations, privacy controls, and dashboard usability using appropriate datasets.
+4.3 Risk Management
+Table 4.2: Project Risks and Mitigation
+4.4 Documentation and Change Control
+Any changes to scoring weights, thresholds, data sources, privacy rules, or analytical methods should be properly documented, as they can affect how the system's results are interpreted. The GitHub repository maintains the project code and version history, while the report captures the key architecture and methodology decisions.
+
+Chapter 5
+ANALYSIS AND DESIGN
+This chapter outlines the functional and non-functional requirements of EngageIQ, along with its system architecture, data model, key modules, and user roles. The design is based on the proposed architecture and defined scoring algorithms, ensuring consistency between the project objectives and implementation.
+
+5.1 Requirements Analysis
+Table 5.1: Functional Requirements
+Table 5.2: Non-Functional Requirements
+
+5.2 System Architecture
+The proposed EngageIQ architecture consists of six layers: Data Sources, Ingestion, Data, AI/ML and Analytics, Application, and Users/Governance. The Signal and Output Layers form the analytical foundation, while the PACE scoring engine, trend and anomaly detection, and risk classification modules convert the processed data into meaningful insights for human review.
+
+
+Figure 5.1: EngageIQ Architecture Diagram
+The architecture diagram illustrates how communication and scheduling platforms supply data to the Signal Layer, while project management and development tools feed the Output Layer. Data is collected through connectors and APIs, then processed using ETL operations before being stored.
+The analytics layer handles feature extraction, PACE scoring, trend analysis, anomaly detection, and risk classification. Finally, the application layer presents the results through dashboards, alerts, and Human-in-the-Loop review.
+
+
+Figure 5.2: System-Level Data Flow
+5.2.1 Architecture Layers
+Data Sources Layer: approved calendar, communication, project and development metadata.
+Ingestion Layer: authentication, API connectors, scheduled retrieval and incremental synchronization.
+Processing Layer: validation, normalization, privacy filtering, missing-value handling and feature engineering.
+Analytics Layer: EHS, OPI, PACE fusion, trend/anomaly detection and risk classification.
+Application Layer: dashboards, reports and alerts.
+Human Review Layer: contextual interpretation, feedback and override.
+5.3 Database Design
+The architecture proposes SQLite for the initial prototype and PostgreSQL for a production-ready implementation. The database schema presented below is a proposed design based on the project architecture, rather than an already deployed production database.
+
+
+
+
+Table 5.3: Conceptual Database Tables
+5.4 Module Design
+Table 5.4: System Module Design
+
+5.5 User Roles and Access
+Table 5.5: User Roles and Permissions
+
+Chapter 6
+IMPLEMENTATION AND DEVELOPMENT
+This chapter breaks down how we actually built EngageIQ and the tech stack running behind the scenes. The core of the project relies on Python, utilizing the PACE framework where we've weighted EHS at 40% and OPI at 60%. For our databases, we use SQLite for quick demos and step up to PostgreSQL for the live production environment. We've also hooked up dashboards to easily visualize the data, and we use Cron and Airflow to keep all our scheduled tasks running automatically in the background. [12].
+6.1 Technology Stack
+Table 6.1: Technology Stack
+
+6.2 Implementation Modules
+6.2.1 Data Ingestion
+The ingestion module acts as the entry point for our data, pulling information from various systems using connectors or simple CSV files. It handles all the behind-the-scenes housekeeping—logging in securely, grabbing data on a schedule, and only pulling in what's new so we don't waste time. It also double-checks that the data coming in makes sense, automatically tries again if a connection drops, manages speed limits so we don't overwhelm the system, and makes sure all the timestamps line up perfectly.
+6.2.2 Data Processing and Feature Engineering
+The processing module takes all that raw data and cleans it up so it's actually usable. It strips out any useless information, makes sure all the dates and times match up, and smoothly handles any missing blank spots. From there, it groups everything together by employee and timeframe, getting the information perfectly organized and ready for the EHS and OPI systems to take over.
+6.2.3 EHS and OPI Engines
+The scoring system calculates everything using our set formulas. It doesn't just spit out a final score, though—it also outputs the specific metrics used to get there. Providing those underlying numbers is intentional, as it allows the dashboard to clearly break down exactly why someone's score went up or down.
+6.2.4 Dashboard and Reporting
+According to the documentation, the dashboard can be built using either Streamlit or a combination of React and Recharts [12].  The design focuses on looking at the data from different angles—offering views for the whole organization, specific teams, and individual employees. Instead of just slapping a single rank or score on an employee, the setup is meant to show the bigger picture by highlighting trends, data breakdowns, past review histories, and the context behind the numbers.
+6.2.5 Alerts and Notifications
+The alert system is designed to notify the right people only when there's a genuine issue or a significant change. We've set it up to send these alerts right inside the app or straight to your email. To keep things from getting annoying, the system allows you to set custom limits, ensuring people aren't spammed with notifications over every tiny blip in the numbers.
+6.3 Repository and Prototype Structure
+The GitHub README documents a project structure containing data, models, dashboard, API, scheduler and tests directories [12]. The repository also documents synthetic demo data as a way to run the initial prototype. Because the web-accessible repository page does not expose the complete contents of the frontend subdirectory in the current retrieval, this report does not claim specific source files or implemented features beyond those documented in the README and supplied project files.
+EngageIQ/
+├── data/ # synthetic datasets and ingestion scripts
+├── models/ # EHS / OPI scoring and time-series models
+├── dashboard/ # Streamlit / React frontend
+├── api/ # REST endpoints
+├── scheduler/ # Cron / Airflow pipelines
+└── tests/ # simulated employee scenarios
+6.4 Privacy and Security Implementation
+Privacy and security were considered firsthand from the architecture and not later added feature. The intended implementation uses RBAC, data minimization, audit logging, consent mechanisms(transperency), data-retention controls, secure API credentials, and separation of employee and manager permissions. The system is made in a way that it should not expose private message content or activity records.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 7
+EVALUATION AND RESULTS
+Right now, we don't have actual employee data or results from a live launch to share. Because of this, this chapter focuses purely on checking the math rather than proving how well the system works in practice. The formulas, limits, and example calculations are all solid and work perfectly on paper. However, to confidently say it works in the real world, we'll need to test it out with real data down the line.
+7.1 Evaluation Strategy
+Evaluation should be covering four areas: functional correctness, numerical correctness, computational complexity, and responsible-use compliance. Functional correctness checks whether each module produces the expected type of output. Numerical correctness checks the documented formulas. Complexity analysis checks whether the pipeline can be processed efficiently. Responsible-use evaluation checks that privacy boundaries and Human-in-the-Loop controls are preserved.
+Verify that EHS remains within the [0,1] range.
+Verify that OPI remains within the [0,1] range.
+Verify that PACE equals 0.4 × EHS + 0.6 × OPI.
+Verify the documented PACE risk bands.
+Verify anomaly detection using a rolling baseline.
+Verify persistent deterioration handling.
+Verify that risk outputs include explanations.
+Verify that no automatic disciplinary action is triggered by the scoring engine.
+7.2 Algorithmic Verification
+Table 7.1: Algorithmic Verification Examples
+The first PACE example comes from our original project specifications. The rest of the rows just show how the system reacts when certain limits or cut-offs are hit based on our setup. Just keep in mind that these are only practice runs to show how everything works under the hood, not actual scores from real employees.
+
+7.3 Complexity Analysis
+Table 7.2: Complexity Analysis
+
+7.4 Discussion of Findings
+The system is built in clear, separate pieces so it's easy to understand exactly what's going on. We calculate the EHS and OPI numbers independently before bringing them together for the final PACE score. We also look at how things change over time, and because we highlight exactly which numbers influenced the final score, managers can easily review and make sense of the results themselves. That said, we don't yet have the hard proof to show exactly how spot-on the system is at catching employee burnout in real life. To really know how well it works, we still need to test it thoroughly using real, responsibly handled information.
+Chapter 8
+SOCIAL, LEGAL, ETHICAL, SUSTAINABILITY AND SAFETY ASPECTS
+Since EngageIQ handles real workplace data, we can't just focus on the tech—we have to carefully consider the legal, ethical, and social sides of things too. The core idea here is to help companies understand how their teams are doing in a healthy, responsible way. It is absolutely not meant to be a creepy surveillance tool or a system that blindly grades or penalizes employees on its own.
+8.1 Social and Ethical Considerations
+The whole point of EngageIQ is to move away from just tracking who stays online the longest. Instead, it looks at healthy work habits right alongside what is actually getting done. Just keep in mind that these numbers are meant to be a helpful guide to look at the big picture, not the absolute final word on how someone is performing.
+8.1.1 Fairness and Role Awareness
+Since every job looks a bit different, it doesn't make sense to measure a software developer the exact same way you'd measure someone in sales. Because of this, EngageIQ sets expectations based on the specific role, rather than trying to force a single, one-size-fits-all standard on the entire company.
+8.1.2 Human Agency
+The alerts the system flags are just meant to be a heads-up for a real person to review, not a definitive diagnosis of a problem. Managers need to look at the full context before making any decisions. Most importantly, the system should never be used to automatically punish or fire someone just because of a dip in their numbers.
+8.2 Privacy and Data Governance
+Table 8.1: Responsible-AI and Governance Controls
+8.3 Legal and Compliance Considerations
+A production deployment would need to comply with the data-protection, employment, information-security, contractual, and organizational policies applicable to the deployment jurisdiction. We didn't write this report based on one specific set of laws, mostly because companies might use the system all over the world. Before actually rolling it out, organizations need to make sure they have the legal right to handle this data in the first place. They also need to figure out exactly how long they'll keep the information, strictly control who gets to see it, be completely upfront with their employees about what is being tracked, and double-check everything against their local labor and privacy laws.
+8.3.1 Governance Documentation
+Document every data source and metric used by the system.
+Document the meaning and limitations of each score.
+Document role-specific baselines and threshold changes.
+Maintain an audit trail for sensitive access and reviewer overrides.
+Periodically review whether each metric remains necessary and proportionate.
+8.4 Sustainability
+EngageIQ supports responsible digital-work infrastructure and aligns with SDG 3, SDG 8, and SDG 9. Its MVP uses batch-based statistical processing, while more computationally intensive methods such as LSTM are reserved for cases where sufficient data justifies their use.
+8.5 Safety and Responsible Use
+EngageIQ isn't meant to act as a doctor, and it definitely shouldn't be making hiring or firing decisions on its own. The dashboards are designed to show the bigger picture and how things are trending over time, rather than just slapping a simple grade on someone's performance. Any alerts that pop up should always be looked at by a real person who can double-check the information and ultimately make the final call themselves.
+
+Chapter 9
+CONCLUSION
+EngageIQ is a thoughtful system designed to understand how remote teams are doing by looking at two main things: healthy work habits and actual results. It basically looks at the data from two different angles. First, it measures employee health and well-being (EHS), and second, it measures the actual work being produced (OPI). We bring these two sides together using our PACE formula. By putting 40% of the focus on well-being and 60% on actual output, we make sure we are valuing the real work getting done over just how often someone is sending emails or chatting online.
+9.1 Conclusion
+The whole goal of this project is to figure out how teams are doing without being creepy or breaking their trust. We do this by looking at basic work information and combining it into our EHS, OPI, and overall PACE scores, while always making sure a real person is reviewing the final results. While the math behind it is clear and solid, it's still just a prototype right now—definitely not something ready to be used for actual hiring or firing choices. Before we can confidently roll this out in the real world, we need to do a lot more testing to make sure we are balancing and measuring everything fairly.
+Future Scope
+Integrate additional workplace platforms through production-grade APIs.
+Develop robust role-specific baselines for different job families.
+Evaluate anomaly detection methods, including Isolation Forest and LSTM-based approaches.
+Introduce stronger uncertainty and confidence reporting for risk signals.
+Validate PACE thresholds against appropriately governed real-world datasets.
+Add richer manager and employee feedback mechanisms.
+Evaluate fairness across roles, teams and work arrangements.
+Implement stronger production authentication, authorization, audit and                   retention controls.
+
+REFERENCES
+[1] N. Forsgren, M.-A. Storey, C. Maddila, T. Zimmermann, B. Houck, and J. Butler, “The SPACE of Developer Productivity: There’s more to it than you think,” ACM Queue, vol. 19, no. 1, pp. 20–48, 2021.
+[2] H. Talebi, A. Khatibi Bardsiri, and V. K. Bardsiri, “Machine Learning Approaches for Predicting Employee Turnover: A Systematic Review,” Engineering Reports, vol. 7, no. 8, e70298, 2025.
+[3] J. T. Polzer, “The Rise of People Analytics and the Future of Organizational Research,” Research in Organizational Behavior, vol. 42, 100181, 2022.
+[4] H. Liu, S. S. Lou, B. C. Warner, D. R. Harford, T. Kannampallil, and C. Lu, “HiPAL: A Deep Framework for Physician Burnout Prediction Using Activity Logs in Electronic Health Records,” in Proc. 28th ACM SIGKDD Conf. Knowledge Discovery and Data Mining (KDD), 2022.
+[5] Y. Wei, J. Jang-Jaccard, W. Xu, F. Sabrina, S. Camtepe, and M. Boulic, “LSTM-Autoencoder-Based Anomaly Detection for Indoor Air Quality Time-Series Data,” IEEE Sensors Journal, vol. 23, no. 4, pp. 3787–3800, 2023.
+[6] F. T. Liu, K. M. Ting, and Z.-H. Zhou, “Isolation Forest,” in Proc. 8th IEEE Int. Conf. Data Mining (ICDM), 2008, pp. 413–422.
+[7] Gallup, “State of the Global Workplace: 2026 Report,” Gallup, 2026.
+[8] Gallup, “State of the Global Workplace: India Country-Level Data,” Gallup, 2026.
+[9] International Labour Organization, “The Psychosocial Working Environment: Global Developments and Pathways for Action,” ILO, 2026.
+[10] United Nations Department of Economic and Social Affairs, “Goal 3: Good Health and Well-Being,” Sustainable Development Goals, United Nations, 2026.
+[11] United Nations Department of Economic and Social Affairs, “Goal 8: Decent Work and Economic Growth,” Sustainable Development Goals, United Nations, 2026.
+[12] S. M. Mehek et al., “EngageIQ: Responsible AI Framework for Remote Employee Engagement Analytics,” GitHub repository, 2026.
+[13] United Nations Department of Economic and Social Affairs, “Goal 9: Industry, Innovation and Infrastructure,” Sustainable Development Goals, United Nations, 2026.
+[14] United Nations Department of Economic and Social Affairs, “Goal 16: Peace, Justice and Strong Institutions,” Sustainable Development Goals, United Nations, 2026.
+[15] World Health Organization, “Burn-out an occupational phenomenon,” ICD-11, World Health Organization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPENDIX
+Appendix A- ALGORITHM PSEUDOCODE
+A.1 EHS Computation
+FUNCTION compute_EHS(
+    meeting_load,
+    focus_gap,
+    response_latency,
+    after_hours_ratio
+):
+    meeting_weight = 0.30
+    focus_weight = 0.30
+    response_weight = 0.20
+    after_hours_weight = 0.20
+    weighted_load =
+          (meeting_weight * meeting_load)
+        + (focus_weight * focus_gap)
+        + (response_weight * response_latency)
+        + (after_hours_weight * after_hours_ratio)
+    EHS = 1 - weighted_load
+    // Restrict the score to the valid range [0, 1]
+    EHS = maximum(0, minimum(1, EHS))
+    RETURN round(EHS, 4)
+END FUNCTION
+
+
+
+
+
+A.2 OPI Computation
+FUNCTION compute_OPI(
+    completion_rate,
+    velocity,
+    deadline_adherence,
+    code_activity,
+    rework_ratio
+):
+    completion_weight = 0.25
+    velocity_weight = 0.25
+    deadline_weight = 0.20
+    activity_weight = 0.20
+    rework_weight = 0.10
+    positive_delivery =
+          (completion_weight * completion_rate)
+        + (velocity_weight * velocity)
+        + (deadline_weight * deadline_adherence)
+        + (activity_weight * code_activity)
+    rework_penalty = rework_weight * rework_ratio
+    OPI = positive_delivery - rework_penalty
+    // Restrict the score to the valid range [0, 1]
+    OPI = maximum(0, minimum(1, OPI))
+    RETURN round(OPI, 4)
+END FUNCTION
+
+
+
+A.3 PACE and Risk Classification
+FUNCTION compute_PACE(EHS, OPI):
+    EHS_weight = 0.40
+    OPI_weight = 0.60
+    PACE =
+          (EHS_weight * EHS)
+        + (OPI_weight * OPI)
+    PACE = maximum(0, minimum(1, PACE))
+    RETURN round(PACE, 4)
+END FUNCTION
+
+FUNCTION classify_risk(PACE, persistent_anomaly = FALSE):
+    IF PACE >= 0.70 THEN risk_band = "Healthy"
+    ELSE IF PACE >= 0.40 THEN risk_band = "Moderate"
+    ELSE
+        risk_band = "At-Risk"
+    END IF
+    // The current pipeline does not calculate trend anomalies and therefore normally uses persistent_anomaly = FALSE.
+    IF persistent_anomaly == TRUE AND risk_band != "At-Risk" THEN
+        IF risk_band == "Healthy" THEN risk_band = "Moderate"
+        ELSE IF risk_band == "Moderate" THEN risk_band = "At-Risk"
+        END IF
+    END IF
+    RETURN risk_band
+END FUNCTION
+
+
+Appendix B
+Table B.1: Conceptual Data Dictionary
+
+
+
+
+
+Appendix C
+The following structure is the repository organization documented in the project's GitHub README [12]. It should be treated as a documented prototype structure rather than a claim that every component is fully production-complete.
+EngageIQ/
+├── data/
+│ └── synthetic datasets & ingestion scripts
+├── models/
+│ └── EHS / OPI scoring & time-series models
+├── dashboard/
+│ └── Streamlit / React frontend
+├── api/
+│ └── REST endpoints
+├── scheduler/
+│ └── Cron / Airflow pipelines
+└── tests/
+└── simulated employee scenarios
+The repository README also documents the privacy boundary: no screenshots, keystrokes or webcam recordings; metadata from workplace tools only; output metrics prioritized over activity tracking; and privacy-first storage [12].
+
+
+
+
+

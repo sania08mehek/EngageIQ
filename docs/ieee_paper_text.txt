@@ -1,0 +1,751 @@
+EngageIQ: A Privacy-Preserving, 
+Human-in-the-Loop Framework for Remote 
+Employee Engagement and Burnout-Risk Analytics 
+
+Akash M S 
+Akash M S
+School of Artificial Intelligence and Advanced Computing 
+School of Artificial Intelligence and Advanced Computing
+Presidency University, Bengaluru, India 
+Presidency University, Bengaluru, India
+
+Madiha 
+School of Artificial Intelligence and Advanced Computing 
+Madiha
+Presidency University, Bengaluru, India 
+School of Artificial Intelligence and Advanced Computing
+Presidency University, Bengaluru, India
+
+Irfan Basha L 
+Mr. Sahabzada Betab Badar
+School of Artificial Intelligence and Advanced Computing 
+Assistant Professor
+Presidency University, Bengaluru, India 
+School of Artificial Intelligence and Advanced Computing
+Presidency University, Bengaluru, India
+
+M Sania Mehek 
+
+Irfan Basha L
+School of Artificial Intelligence and Advanced Computing 
+School of Artificial Intelligence and Advanced Computing
+Presidency University, Bengaluru, India 
+Presidency University, Bengaluru, India
+
+Mr. Sahabzada Betab Badar 
+M Sania Mehek
+Assistant Professor 
+School of Artificial Intelligence and Advanced Computing
+School of Artificial Intelligence and Advanced Computing 
+Presidency University, Bengaluru, India
+Presidency University, Bengaluru, India 
+
+Abstract—Remote  work  has  stripped  managers  of  cues  that 
+they  used  to  identify  when  a  team  member  was  under  stress. 
+And in response to this challenge, may organizations have chosen 
+keystroke  tracking,  screens-and-webcam  monitoring  solutions 
+that  destroy  trust.  In  this  paper,  we  introduce  EngageIQ  –  an 
+analytics platform that has been developed on top of PACE score, 
+which  looks  at  work  from  two  perspectives  rather  than  one.  A 
+Signal  Layer  captures  how  things  happen  with  only  metadata 
+(calendar  data  and  comms)  and  the  Output  Layer  summarizes 
+the  results  produced  by  the  metadata  (tasks  and  code  repos) 
+of  completion  rates,  velocities,  adherence  to  deadlines,  and  re-
+work. Rating indices EHS and OPI are fused with weights of 0.4 
+and  0.6  respectively  so  quiet  collaborators  are  not  punished  for 
+their  collaboration  habits.  Rolling  baseline  deviation  and  three-
+band  risk  classifier  make  scoring  a  human-interpretable  signal, 
+and  all  cases  of  alert  are  forwarded  to  human  analysts  and 
+not  automatically  escalated.  The  system  is  coded  with  FastAPI, 
+SQLalchemy backend and React and TypeScript dashboard. On 
+synthetic data set with 50 employees and seven teams, the pipeline 
+has classified 15 employees as healthy, 25 as moderate, and 10 as 
+At-Risk, storing EHS/OPI breakdown behind each classification. 
+
+Index  Terms—employee  engagement,  burnout  detection,  re-
+sponsible  AI,  workplace  analytics,  privacy  by  design,  anomaly 
+detection, human-in-the-loop, remote work 
+
+I.  INTRODUCTION 
+
+When  a  team  leaves  the  shared  office,  a  manager  looses 
+plenty  of  invisible  information.  Nobody  sees  who  stays  late 
+three days in row, who stops joining the discussions or whose 
+day  is  full  of  meetings  and  nobody  can  think.  Invisible 
+in  this  way,  burnouts  which  are  defined  by  World  Health 
+Organization  as  an  occupational  phenomenon  that  emerges 
+due  to  unmanageable  chronic  stress  [2]  harm  well-being  and 
+performance,  and  this  fact  is  well  proven  by  the  scientific 
+literature [1]. 
+
+The  natural  reaction  of  organizations  is  to  control  even 
+more.  Keystroke  loggers,  making  screenshots  and  tracking 
+"active" status is available and justified easily to the manager. 
+But  these  are  bad  indicators  of  productive  work.  Reviews  of 
+monitoring in electronic work places indicate that monitoring 
+can result in stress and increase of autonomy [8]. Furthermore, 
+religious  limits  still  exist,  since  GDPR  and  other  law  require 
+personal data to be collected for specific purposes only [3]. 
+
+EngageIQ  asks  different  question.  Instead  of  checking  if 
+someone is working at the keyboard, it asks whether the work 
+pattern is healthy and whether effectiveness is sustainable and 
+treats  the  results  just  as  a  basis  for  dialogue.  This  model 
+is  based  on  PACE  model  which  applies  dual  lens  paradigm. 
+The  Signal  Layer  characterizes  work  pattern  based  only  on 
+metadata  of  calendars  and  collaborative  tools.  The  Output 
+Layer shows output basing only on metadata that comes from 
+task trackers and code repositories. The results are summarized 
+in one score but output weights in this sum heavier. 
+
+The roles of the papers are the following: 
+•  A  dual  lens  score  model  called  PACE  model  evaluates 
+separation  of  work  pattern  development  (EHS)  from 
+output  delivery  (OPI)  and  merges  two  parameters  into 
+one score (40% to 60%). 
+
+•  A  lightweight  and  interpretable  trend  and  risk  pipeline 
+comparing  individual  with  historical  baseline  of  their 
+scores and preserving the EHS and OPI decomposition. 
+•  A proof-of-concept implementation in a FastAPI service, 
+relational  store  and  React  dashboard  with  role-based 
+views,  plus  an  interactive  simulator  that  lets  the  user 
+explore how their readings contribute to the score. 
+
+•  Discussion of the privacy, fairness and human-oversight 
+constraints informing the design, together with an honest 
+discussion of the limits of the current evaluation. 
+
+ 
+ 
+ 
+ 
+ 
+ 
+The rest of the paper is structured as follows. Related work 
+is reviewed in Section II. Section III lists the design objectives. 
+Section IV describes the architecture while section V outlines 
+the  algorithms  and  section  VI  the  implementation.  Results 
+on  the  prototype  are  reported  in  Section  VII,  Section  VIII 
+discusses the responsible-AI aspects, and Section IX concludes 
+with limitations and future work. 
+
+II.  RELATED  WORK 
+
+A.  Burnout and Work Design 
+
+Maslach  and  Leiter  define  burnout  as  a  combination  of 
+exhaustion,  cynicism  and  diminished  efficacy,  and  associate 
+it  with  mismatch between  individuals  and  their  jobs  in  terms 
+of  excessive  workload,  lack  of  control  and  weak  recognition 
+[1]. The Job Demands–Resources framework provides another 
+view:  high  demand  levels  without  adequate  resources  will 
+cause strain and disengagement [9]. These literatures agree that 
+load and autonomy are important. The broader people analytics 
+field, which Polzer reviews, has rapidly expanded within orga-
+nizations, and also raises ethical questions about privacy and 
+inference from organizational research [13]. Machine learning 
+research on workforce outcomes, exemplified by the review of 
+employee turnover prediction by Talebi et al. [12], reveals how 
+much  of  this  literature  depends  on  human-resources  records 
+and surveys instead of everyday work metadata. That explains 
+the  choice  of  load,  uninterrupted  focus  time  and  after-hours 
+work  as  the  main  inputs  in  the  Signal  Layer,  since  each  of 
+these  is  roughly  equivalent  to  a  demand  indicator  or  lack  of 
+control over one’s time. 
+
+B.  Measures of Productivity 
+
+Forsgren  et  al.  claim  that  there  is  no  single  metric  that 
+can  adequately  capture  developer  productivity  and  suggest 
+analysing several dimensions: satisfaction, activity, communi-
+cations and efficiency [10]. Similarly, EngageIQ does not trust 
+single-number measures of either engagement or productivity, 
+presents both lenses separately in the UI, shows the individual 
+components and uses their combination mostly as a pointer to 
+where the person needs to focus first. 
+
+C.  Workplace Monitoring and Responsible AI 
+
+Ball’s literature review for the European Commission covers 
+the spread of workplace monitoring and the associated policy 
+issues  such  as  proportionality,  transparency  and  participation 
+[8]. In the responsible AI domain, the NIST Framework calls 
+for developing systems that are explainable, privacy-enhanced 
+and subject to meaningful human supervision [11]; surveys of 
+explainable AI stress the importance of having an explanation 
+accompany any prediction affecting a human [7]. These criteria 
+are applied by EngageIQ as requirements rather than options. 
+
+D.  Anomaly Detection 
+
+There  is  extensive  literature  on  anomaly  detection  tech-
+niques,  surveyed by  Chandola  et  al.  [4].  Related  to our  case, 
+HiPAL  is  an  anomaly  detector  predicting  physician  burnout 
+based on activity logs from electronic health records instead of 
+
+content  of  clinical  practice  [14],  which  supports  our  premise 
+that  behavioral  metadata  has  burnout-related  signal.  Model-
+based approaches like Isolation Forest [16] or LSTM autoen-
+coders [15] are natural candidates to detect anomalies in time-
+series.  With  short  and  noisy  time  series,  simple  statistical 
+approaches are often more interpretable than machine learning 
+methods. EngageIQ uses rolling mean and standard deviation 
+for anomaly detection in the current prototype and leaves the 
+sequence models as future work once there is enough history 
+available. 
+
+III.  PROBLEM  STATEMENT  AND  DESIGN  GOALS 
+
+Given  weekly  work  metadata  for  a  number  of  employees, 
+estimate  whether  each  person’s  current  pattern  of  work  and 
+deliveries is healthy, drifting or at risk, provide an explanation 
+and  route  the  case  to  a  human.  We  formulated  five  design 
+goals before implementing the system. 
+Privacy  first.  Use  only  metadata  such  as  durations,  counts, 
+timestamps, and status fields. Do not process message content, 
+keystrokes, screenshots, webcam images, or browsing history. 
+Output  vs  Activity.  Give  preference  to  delivered  work  over 
+activity to avoid punishing quiet yet productive individuals. 
+Change over Level. Shift from a person’s own baseline is more 
+valuable  than  a  single  low  value.  Explainability.  Each  score 
+should  have  an  explanation  attached  to  it  (index  values  and, 
+in full design, the underlying features that produced it). 
+Human decision.  The system generates a signal and provides 
+an explanation. It never recommends discipline or an automatic 
+employment decision. 
+
+IV.  SYSTEM  ARCHITECTURE 
+
+The  EngageIQ  architecture  is  structured  into  a  pipeline  as 
+seen  in  Fig.  1.  There  is  a  flow  of  information  from  other 
+tools through the ingestion stage, privacy filtering process and 
+two  layers  of  features  into  scoring,  trend  analysis  and  risk 
+categorization to role-based dashboards. 
+
+A.  Data Sources and Ingestion 
+
+The  Signal  Layer  gets  data  from  calendar  and  communi-
+cation tools (Google Calendar, Outlook, Slack and Microsoft 
+Teams).  The  Output  Layer  gets  data  from  task  tracker  (Jira 
+or  Asana),  version  control  system  (GitHub  or  GitLab),  and 
+optionally  self-reported  effort.  Connectors  authenticate  with 
+OAuth,  pull  data  on  a  schedule  and  sync  incrementally.  In 
+the  current  prototype,  ingestion  is  a  validated  CSV  upload 
+endpoint  carrying  the  same  normalised  feature  columns  that 
+would be produced by the connectors, allowing the rest of the 
+pipeline modules to be developed and tested in absence of live 
+credentials. 
+
+B.  Processing, Storage and Privacy Filter 
+
+The  processing  stage  verifies  required  columns,  handles 
+missing  data  and  outliers,  normalises  every  feature  into  the 
+range  [0,  1]  and  drops  any  data  that  is  not  on  the  approved 
+metadata  list.  Raw  extracts  are  supposed  to  be  stored  in 
+object  storage,  with  the  processed  features  and  scores  stored 
+
+TABLE I 
+FEATURE  SET  AND  WEIGHTS 
+
+Index 
+
+Feature 
+
+Weight 
+
+EHS  Meeting load 
+EHS 
+EHS 
+EHS 
+OPI 
+OPI 
+OPI 
+OPI 
+OPI 
+
+Focus gap 
+Response latency 
+After-hours ratio 
+Completion rate 
+Sprint velocity 
+Deadline adherence 
+Code activity 
+Rework ratio 
+
+0.30 
+0.30 
+0.20 
+0.20 
+0.25 
+0.25 
+0.20 
+0.20 
+−0.10 
+
+TABLE II 
+RISK  BANDS 
+
+Band 
+
+PACE range  Meaning 
+
+Healthy 
+Moderate 
+At-Risk 
+
+0.70–1.00 
+0.40–0.69 
+0.00–0.39 
+
+Balanced, steady 
+Early warning signs 
+Needs a conversation 
+
+Fig.  1.  Layered  architecture  of  EngageIQ,  from  data  sources  through 
+ingestion,  storage,  AI/ML  and  analytics  layer,  and  application  layer  to  the 
+four user groups. 
+
+in  a  relational  warehouse.  The  prototype  uses  SQLite  via 
+SQLAlchemy and PostgreSQL is the production target. 
+
+C.  Scoring, Trend and Risk Modules 
+
+Scoring  module  calculates  EHS,  OPI  and  the  fused  PACE 
+score. The trend module compares the current scores against a 
+rolling baseline. The risk classifier assigns one of three bands, 
+with  the  score  and  index  values  being  stored  in  the  record. 
+They are described in Section V. 
+
+D.  Application Layer and Human Review 
+
+Application layer exposes REST endpoints and a dashboard 
+with  views  for  employees,  managers,  HR  and  leadership. 
+Alerts  can  be  delivered by  email  or  in-app  notifications. The 
+review panel allows a manager to open the case, add context, 
+comment on the reasoning and override the signal so that the 
+false  positives  are  corrected  and  the  reasoning  is  saved.  An 
+audit  trail  and  role-based  access  control  are  the  privacy  and 
+governance component of the modules. 
+
+(events after working hours divided by total number of events). 
+The EHS is one minus the weighted sum of these indicators: 
+
+EHS = 1 − (0.30m + 0.30f + 0.20r + 0.20a) 
+
+(1) 
+
+and clipped to [0, 1]. Meeting load and focus gap get a little 
+more weight than latency and after-hours work, since they best 
+capture whether the person has space to concentrate. 
+
+B.  Output Layer: Output Productivity Index (OPI) 
+
+From  task-tracker  and  repository  metadata  we  calculate 
+completion  rate  c,  sprint  velocity  v,  deadline  adherence  d, 
+code  activity  g  (commits and pull requests) and rework ratio 
+w (reopened or revised issues per total issues). Rework is the 
+only component that is negative for the person: 
+
+OPI = 0.25c + 0.25v + 0.20d + 0.20g − 0.10w 
+
+(2) 
+
+and  the  resulting  value  is  clipped  to  [0,  1].  According  to 
+the  design,  each  indicator  is  normalised  using  role-specific 
+baselines so that, for instance, engineers’ commits and sales-
+people’s  CRM  activities  are  not  comparable  under  the  same 
+scale. Baselines are not yet implemented in the prototype and 
+are listed as future work. 
+
+C.  PACE Fusion 
+
+V.  METHODOLOGY 
+
+The final score is the weighted combination of two indices: 
+
+A.   Signal Layer: Engagement and Work-Pattern Health (EHS) 
+
+For  each  person  and  period  four  indicators  are  calculated 
+based on calendar and chat metadata and normalised to [0, 1]; 
+the greater the value, the heavier/less healthy the load: meeting 
+load  m  (hours  in  meetings  divided  by  hours  worked),  focus 
+gap  f  (one  minus  longest  uninterrupted  block  as  the  fraction 
+of working hours), response latency r, and after-hours ratio a 
+
+PACE = 0.4 × EHS + 0.6 × OPI 
+
+(3) 
+
+For example, a person with EHS = 0.50 and OPI = 0.80 will 
+have PACE = 0.20 + 0.48 = 0.68. The heavier weight of OPI 
+is  not  only  a  matter  of  statistics  but  also  ethics:  someone 
+who communicates less frequently but always delivers on time 
+should not fall into a risk band for that reason. 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+D.  Trend and Anomaly Detection 
+
+Individual  scores  may  be  misleading,  hence  the  trend  de-
+tection module takes into account the history of the particular 
+individual.  Over  the  sliding  window  of  the  past  six  periods, 
+the mean  µ and standard deviation  σ are calculated using the 
+first five periods, and the deviation of the current period score 
+s is 
+
+z = 
+
+µ − s 
+
+σ 
+
+(4) 
+
+in such a way that positive  z indicates that the particular em-
+ployee is doing worse than usual. If the deviation  z  surpasses 
+a  certain  threshold  k  (set  to  1.5  by  default)  the  period  is 
+considered  anomalous.  Further,  depending  on  whether or  not 
+the  previous  period  exceeded  the  threshold,  the  situation  is 
+called persistent deterioration or sudden change, respectively. 
+The module is capable of detecting combined patterns which 
+are of interest for management, such as deterioration of work-
+pattern  health  without  changes  in  output,  or  deterioration  of 
+both  layers  simultaneously.  The  prototype’s  dashboard  has  a 
+simplified  client-side  implementation  that  detects  anomalies 
+relative  to  the  past  history  over  the  past  four  weeks;  the 
+entire  rolling-baseline  procedure  is  specified  and  waiting  to 
+be integrated into the service. 
+
+E.  Risk Classification 
+
+The PACE score is classified into three risk bands according 
+to  Table  II.  The  classifier  takes  the  flag  about  persistent 
+deterioration provided by the trend module, and in case of its 
+being set, escalates the band of a record by one regardless of 
+the actual score. In the prototype the explanation that is stored 
+along  with  the  band  is  the  breakdown  of  the  EHS  and  OPI 
+scores;  the  plain-language  explanations  like  "output  is  stable 
+while  work-pattern  health  has  deteriorated  and  meeting  load 
+has increased" are part of the design and are demonstrated in 
+simulator  scenarios.  The  flag  is  not  yet  passed  in  the  upload 
+endpoint,  as  the  trend  procedure  is  not  yet  integrated  into 
+the  prototype.  These  risk  bands  are  the  presentation-layer 
+thresholds  and  require  calibration  using  real  organisational 
+data to be used in production. 
+
+VI.  IMPLEMENTATION 
+
+Fig. 2.  Organisation dashboard displaying mean PACE, EHS, OPI and risk 
+distribution. 
+
+Fig. 3.  PACE simulator with interactive scenarios and sliders and the score 
+resulted by them. 
+
+TABLE III 
+MEAN  SCORES  BY  RISK  BAND  (N  =  50) 
+
+Band 
+
+n 
+
+EHS  OPI 
+
+PACE 
+
+Healthy 
+Moderate 
+At-Risk 
+
+15 
+25 
+10 
+
+0.86 
+0.60 
+0.22 
+
+0.72 
+0.45 
+0.16 
+
+0.78 
+0.51 
+0.18 
+
+B.  API 
+
+There  are  two  key  endpoints  for  the  process  flow.  POST 
+request to upload endpoint uploads the CSV file, makes sure 
+there is all twelve columns, creates employees in the database 
+for  the  first  time,  calculates  EHS,  OPI,  PACE  and  risk  band 
+for  each  record,  saves  everything  and  returns  the  summary. 
+GET request to scores endpoint returns all saved scores along 
+with the name, team and breakdown for the dashboard. 
+
+A.  Technology Stack 
+
+C.  Dashboard 
+
+Back-end is a Python FastAPI application using Pandas for 
+parsing/validation and SQLAlchemy for persistence, with two 
+tables:  the  employees  table  and  the  score  records  table  that 
+keeps the EHS, OPI, PACE score, risk band, explanation and 
+timestamp. Front-end is a React 18 and TypeScript single-page 
+application  built  on  top  of  Vite,  React  Router  and  Recharts 
+with  a  possibility  to  switch  between  light  and  dark  themes. 
+The technology stack consists of Apache Airflow for scheduled 
+ingestion, PostgreSQL and S3 storage, OAuth 2.0 and JWT for 
+authentication,  Docker  and  GitHub  Actions  for  deployment. 
+All  production  components  are  considered  in  the  application 
+architecture, but not all of them are actually connected in the 
+prototype yet. 
+
+The  dashboard  is  composed  of  four  main  sections.  Orga-
+nization  dashboard  (Fig.  2)  shows  headcount,  mean  PACE, 
+EHS  and  OPI,  as  well  as  distribution  of  people  across  risk 
+bands.  Team  and  individual  dashboards  show  two  lenses  for 
+each  person  side-by-side,  including  sparklines  and  particular 
+features  that  moved.  Review  queue  and  review  panel  imple-
+ment  the  human-in-the-loop  step.  The  PACE  simulator  (Fig. 
+3)  allows  a  user  to  select  a  scenario  ("quiet  collaborator" 
+or "collaboration slipping"), tweak weekly feature values and 
+observe the resulting score and multi-week trend change. The 
+simulator is mainly a transparency tool, as it allows employees 
+and managers to see precisely how readings are turned into a 
+score. 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+C.  Discussion 
+
+These  results  prove  that  the  proposed  pipeline  works  as 
+intended:  it  separates  the  three  synthetic  profiles  cleanly, 
+generates  scores  within  the  expected  range  and  persists  EHS 
+and  OPI  breakdown  with  each  record.  They  should  not  be 
+taken as proof of effectiveness of PACE to detect real burnout 
+since  the  data  has  been  generated  from  archetypes,  and  con-
+sequently, the EHS and OPI are  highly correlated (r = 0.96). 
+In  other  words,  the  separation  looks  easier  than  it  would  be 
+in  real  teams  where  an  employee  could  be  healthy  in  terms 
+of  work  patterns  and  have  poor  output  and  vice  versa.  The 
+most  interesting  scenarios  for  PACE  are  those  when  the  two 
+lenses  diverge,  and  such  cases  are  represented  by  simulator 
+scenarios  "quiet  collaborator"  and  "collaboration  slipping". 
+A  proper  validation  should  be  done  with  longitudinal  real 
+data,  comparison  against  a  validated  burnout  instrument  and 
+calculation of false-positive rate using manager feedback. 
+
+VIII.  RESPONSIBLE  AI,  PRIVACY  AND  ETHICS 
+
+Data  minimisation.  The  ingestion  schema  includes  numeric 
+and  categorical  metadata  only.  Message  bodies,  attachments, 
+screen content and personal browsing is excluded intentionally, 
+and the processing step discards fields which are not included 
+in the approved list. 
+Human  oversight.  The  classifier  returns  a  band  and  an  ex-
+planation,  but  no  decision  itself.  The  manager  or  HR  can 
+comment  or  override  each  case,  and  the  reasoning  is  kept  in 
+the  log.  This  aligns  with  the  principle  that  analytics  should 
+facilitate discussion and leave the decision to the person with 
+the context. 
+Fairness.  The  factor  of  0.6  in  the  output  gives  less  weight  to 
+introverts  or people  who  work  asynchronously.  Role-specific 
+baselines  need  to  be  created  so  that  employees  from  various 
+positions are not being compared by the same standard. Self-
+comparison  against  one’s  own  baseline  rather  than  against 
+peers limits the possibilities for unfair ranking. 
+Transparency and consent. Employees need to be aware of the 
+information that is being collected and of how scores are calcu-
+lated. The simulator and employee-level views are supposed to 
+make the approach auditable. Governance module will include 
+role-based access control,  audit log and consent management 
+to meet GDPR and SOC 2 compliance requirements. 
+Misuse  risk.  Every  score  could  be  misused,  for  example,  as 
+the basis for ranking employees during performance reviews. 
+Potential mitigations involve showing trends rather than league 
+tables,  limiting  the  audience  for  individual-level  data  and 
+explicitly stating that the score is a trigger for assistance rather 
+than an indication of value in the interface. 
+
+Fig. 4.  (a) Employees plotted by EHS and OPI; dashed and dotted lines mark 
+the PACE = 0.70 and 0.40 band boundaries. (b) Mean PACE by team. 
+
+VII.  RESULTS  AND  DISCUSSION 
+
+A.  Experimental Setup 
+
+Since real employee metadata cannot be used due to privacy 
+concerns  and  lack  of  access,  the  prototype  is  tested  on  a 
+synthetically  generated  dataset  of  50  employees  divided  into 
+seven  teams.  Each  synthetic  person  belongs  to  one  of  three 
+behavioural  profiles  (healthy,  strained  or  at-risk)  and  has 
+feature  values  sampled  from range  characteristic  to  a  profile. 
+The  upload  endpoint processed  all  50  rows  and  persisted  the 
+scores. All the graphs below have been generated by invoking 
+the scoring functions directly on the same file. 
+
+B.  Score Distribution 
+
+On average the employees in the organisation had an EHS of 
+0.60, an OPI of 0.47 and a PACE score of 0.52. The classifier 
+classified 15 employees as Healthy, 25 as Moderate and 10 as 
+At-Risk. Table III shows mean indices in each band and Fig. 3 
+shows each individual along with the boundaries of the bands 
+as per Eq. (3). Team averages vary from 0.68 for Data & ML 
+to 0.41 for Growth Marketing. 
+
+IX.  LIMITATIONS  AND  FUTURE  WORK 
+
+There  are  certain  limitations  in  this  study.  First  of  all,  the 
+evaluation  of  the  system  is  based  solely  on  the  synthetic 
+data.  Second,  the  ingestion  process  is  implemented  through 
+importing a CSV file, while the live connectors for calendars, 
+chats,  trackers,  and  repositories  have  not  been  implemented 
+yet. Third, the rolling-baseline anomaly detection method and 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+baseline  values  per  role  are  specified,  however,  the  imple-
+mentation  is  yet  to  be  developed.  Fourth,  the  weights  and 
+thresholds  values  are  expert-defined  and  uncalibrated.  Fifth, 
+authentication,  audit  logging  and  the  notification  service  are 
+at the design stage. 
+
+Planned  future  steps  include:  connecting  actual  APIs 
+through scheduled jobs; running a pilot study with consenting 
+volunteers and a validated burnout questionnaire as the ground 
+truth;  learning  role-specific  baselines;  using  Isolation  Forest 
+[16]  or  an  LSTM  autoencoder  [15]  in  place  of  deviation 
+test  after  collecting  sufficient  history  while  preserving  the 
+requirement  for  explanation;  and  conducting  a  fairness  audit 
+to ensure that there are no score differences by role, location, 
+and work schedule patterns. 
+
+[11]  National Institute of Standards and Technology, “Artificial Intelligence 
+Risk Management Framework (AI RMF 1.0),” NIST AI 100-1, Gaithers-
+burg, MD, USA, Jan. 2023. 
+
+[12]  H.  Talebi,  A.  Khatibi  Bardsiri,  and  V.  K.  Bardsiri,  “Machine  learning 
+approaches for predicting employee turnover: A systematic review,” Eng. 
+Rep., vol. 7, no. 8, Art. no. e70298, 2025. 
+
+[13]  J. T. Polzer, “The rise of people analytics and the future of organizational 
+
+research,” Res. Organ. Behav., vol. 42, Art. no. 100181, 2022. 
+
+[14]  H. Liu, S. S. Lou, B. C. Warner, D. R. Harford, T. Kannampallil, and C. 
+Lu, “HiPAL: A deep framework for physician burnout prediction using 
+activity logs in electronic health records,” in Proc. 28th ACM SIGKDD 
+Conf. Knowl. Discovery Data Mining (KDD), 2022. 
+
+[15]  Y. Wei, J. Jang-Jaccard, W. Xu, F. Sabrina, S. Camtepe, and M. Boulic, 
+“LSTM-autoencoder-based  anomaly  detection  for  indoor  air  quality 
+time-series data,” IEEE Sensors J., vol. 23, no. 4, pp. 3787–3800, Feb. 
+2023. 
+
+[16]  F. T. Liu, K. M. Ting, and Z.-H. Zhou, “Isolation Forest,” in Proc. 8th 
+
+IEEE Int. Conf. Data Mining (ICDM), 2008, pp. 413–422. 
+
+X.  CONCLUSION 
+
+EngageIQ demonstrates that it is possible to provide organi-
+zations with an early warning perspective on engagement and 
+burnout risk assessment without analyzing content and screen 
+activity.  Using  healthy  work-patterns  along  with  generated 
+output,  favoring  output  in  the  weighing  process,  performing 
+intra-individual  comparisons,  and  sending  all  signals  to  a 
+human reviewer are some ways the PACE framework attempts 
+to  ensure  that  the  analytics  remain  supportive  rather  than 
+punitive.  The  prototype  demonstrates  the  implementation  of 
+scoring, classification and dashboard layers on synthetic data. 
+The following phase would be validation of the prototype on 
+real consented data and evaluation of the value of the signals 
+provided  to  managers  as  an  aid  to  supporting  their  teams  in 
+an early stage. 
+
+XI.  ACKNOWLEDGEMENT 
+
+The authors would like to acknowledge their project guide 
+Mr.  Sahabzada  Betab  Badar  and  the  School  of  Artificial 
+Intelligence and Advanced Computing, Presidency University. 
+
+REFERENCES 
+
+[1]  C.  Maslach  and  M.  P.  Leiter,  “Understanding  the  burnout  experience: 
+Recent research and its implications for psychiatry,” World Psychiatry, 
+vol. 15, no. 2, pp. 103–111, Jun. 2016. 
+
+[2]  World  Health  Organization,  “Burn-out  an  ‘occupational  phenomenon’: 
+International  Classification  of  Diseases,”  WHO,  Geneva,  Switzerland, 
+May 2019. 
+
+[3]  Regulation  (EU)  2016/679  of  the  European  Parliament  and  of  the 
+Council  (General  Data  Protection  Regulation),  Official  Journal  of  the 
+European Union, L 119, pp. 1–88, Apr. 2016. 
+
+[4]  V. Chandola, A. Banerjee, and V. Kumar, “Anomaly detection: A survey,” 
+
+ACM Comput. Surv., vol. 41, no. 3, Art. no. 15, Jul. 2009. 
+
+[5]  F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” J. Mach. 
+
+Learn. Res., vol. 12, pp. 2825–2830, 2011. 
+
+[6]  W. McKinney, “Data structures for statistical computing in Python,” in 
+
+Proc. 9th Python in Science Conf. (SciPy), 2010, pp. 56–61. 
+
+[7]  A.  Barredo  Arrieta  et  al.,  “Explainable  artificial  intelligence  (XAI): 
+Concepts, taxonomies, opportunities and challenges toward responsible 
+AI,” Inf. Fusion, vol. 58, pp. 82–115, Jun. 2020. 
+
+[8]  K.  Ball,  “Electronic  monitoring  and  surveillance  in  the  workplace: 
+Literature review and policy recommendations,” Publications Office of 
+the European Union, Luxembourg, 2021. 
+
+[9]  A.  B.  Bakker  and E.  Demerouti,  “The  Job  Demands-Resources  model: 
+
+State of the art,” J. Manag. Psychol., vol. 22, no. 3, pp. 309–328, 2007. 
+[10]  N. Forsgren, M.-A. Storey, C. Maddila, T. Zimmermann, B. Houck, and 
+J. Butler, “The SPACE of developer productivity,” ACM Queue, vol. 19, 
+no. 1, pp. 20–48, 2021. 
+
+
